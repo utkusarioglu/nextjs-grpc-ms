@@ -1,0 +1,17 @@
+{
+  "name": "ms.nextjs-grpc.workshops.utkusarioglu.com",
+  "dockerComposeFile": [
+    "../.docker/docker-compose.dev.yml",
+    "docker-compose.devcontainer.yml"
+  ],
+  "service": "ms",
+  "workspaceFolder": "/utkusarioglu/workshops/nextjs-grpc/ms",
+  "settings": {
+    "workbench.colorCustomizations": {
+      "activityBar.background": "#004400"
+    }
+  },
+  "features": {
+    "github-cli": "latest"
+  }
+}
