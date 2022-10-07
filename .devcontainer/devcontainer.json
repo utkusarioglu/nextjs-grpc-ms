@@ -1,17 +1,26 @@
 {
-  "name": "ms.nextjs-grpc.workshops.utkusarioglu.com",
+  "name": "ms.nextjs-grpc.projects.utkusarioglu.com",
   "dockerComposeFile": [
     "../.docker/docker-compose.dev.yml",
     "docker-compose.devcontainer.yml"
   ],
   "service": "ms",
-  "workspaceFolder": "/utkusarioglu/workshops/nextjs-grpc/ms",
+  "workspaceFolder": "/utkusarioglu/projects/nextjs-grpc/ms",
   "settings": {
     "workbench.colorCustomizations": {
       "activityBar.background": "#004400"
     }
   },
   "features": {
-    "github-cli": "latest"
-  }
+    "github-cli": "latest",
+    "kubectl-helm-minikube": {
+      "kubectl": "latest",
+      "helm": "latest",
+      "minikube": "none"
+    }
+  },
+  "extensions": [
+    "zxh404.vscode-proto3"
+  ],
+  "postAttachCommand": "yarn"
 }

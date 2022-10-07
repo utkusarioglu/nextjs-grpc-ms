@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ms.fullname" . }}
+  labels:
+    {{- include "ms.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "ms.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "ms.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "ms.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            {{- range $k, $v := .Values.env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+            {{- end }}
+            - name: IS_LOCAL
+              value: {{ .Values.cloudProvider.isLocal | quote }}
+            - name: IS_AWS
+              value: {{ .Values.cloudProvider.isAws | quote}}
+            # - name: GRPC_SERVER_CERT_PATH
+            #   value: {{ .Values.env.GRPC_SERVER_CERT_PATH | quote }}
+            # - name: GRPC_VERBOSITY
+            #   value: {{ .Values.env.GRPC_LOG_VERBOSITY | upper | quote }} 
+            # - name: GRPC_TRACE
+            #   value: {{ .Values.env.GRPC_TRACE | lower | quote }}
+            # - name: GRPC_CHECK_CLIENT_CERT
+            #   value: {{ .Values.env.GRPC_CHECK_CLIENT_CERT | ternary "TRUE" "FALSE" }}
+          volumeMounts:
+            - name: ms-grpc-server-cert
+              mountPath: {{ .Values.env.GRPC_SERVER_CERT_PATH | quote }}
+              readOnly: true
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: ms-grpc-server-cert
+          secret:
+            secretName: ms-grpc-server-cert
