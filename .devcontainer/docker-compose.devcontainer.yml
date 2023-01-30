@@ -1,19 +1,39 @@
 version: "3.9"
 services:
   ms:
+    extra_hosts:
+      local.targets.infra.nextjs-grpc.projects.utkusarioglu.com: host-gateway
     volumes:
       - vscode-extensions:/root/.vscode-server/extensions
       - vscode-extensions-insiders:/root/.vscode-server-insiders/extensions
-      - ~/.config/gh:/home/node/.config/gh:ro
-      - ~/.config/helm:/home/node/.config/helm
+      # - ~/.config/gh:/home/node/.config/gh:ro
+      # - ~/.config/helm:/home/node/.config/helm
+      - target: /home/node/.kube/config
+        source: ~/.kube/config
+        type: bind
+      - target: /root/.kube/config
+        source: ~/.kube/config
+        type: bind
     command: /bin/sh -c "while sleep 1000; do :; done"
+    # network_mode: host
+
     networks:
-      - nextjs_grpc
+      - gefyra
+      # - k3d-nextjs-grpc-k3d-dev-local
+      # - nextjs_grpc
+    cap_add:
+      - "NET_ADMIN"
+    devices:
+      - /dev/net/tun:/dev/net/tun
 
 volumes:
   vscode-extensions:
   vscode-extensions-insiders:
 
 networks:
-  nextjs_grpc:
+  gefyra:
     external: true
+  # k3d-nextjs-grpc-k3d-dev-local:
+  #   external: true
+  # nextjs_grpc:
+  #   external: true

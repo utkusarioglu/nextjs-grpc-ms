@@ -48,8 +48,7 @@ diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
 const metricExporter = new PrometheusExporter(
   { port: prometheusPort, startServer: true },
-  () =>
-    console.log(`metrics @ ${process.env.HOSTNAME}:${prometheusPort}/metrics`)
+  () => console.log(`metrics @ ms.ms:${prometheusPort}/metrics`)
 );
 const meterProvider = new MeterProvider({
   exporter: metricExporter,

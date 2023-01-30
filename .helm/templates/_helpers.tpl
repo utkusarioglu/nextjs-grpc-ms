@@ -70,3 +70,17 @@ service.beta.kubernetes.io/aws-load-balancer-type: nlb
 service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
 service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
 {{- end }}
+
+{{/*
+Produce repo path from project path and repo subpath
+*/}}
+{{- define "ms.repoPath" -}}
+{{- printf "%s/%s" .Values.env.PROJECT_ROOT_PATH .Values.env.REPO_SUBPATH -}}
+{{- end -}}
+
+{{/* 
+Produce absolute path for a single cert
+*/}}
+{{- define "ms.singleCertPath" -}}
+{{- printf "%s/%s" .global.Values.env.CERTS_PATH .subpath -}}
+{{- end -}}

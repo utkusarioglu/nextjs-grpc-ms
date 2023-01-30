@@ -1,0 +1,11 @@
+FROM node:19-slim
+ARG ROOT_PASS=ROOT
+RUN sh -c 'echo "root:$ROOT_PASS" | chpasswd'
+RUN sh -c 'echo "node:$ROOT_PASS" | chpasswd'
+RUN apt update && apt install -y vim curl sudo
+WORKDIR  /utkusarioglu-com/projects/nextjs-grpc/ms
+COPY ms /utkusarioglu-com/projects/nextjs-grpc/ms
+COPY proto /utkusarioglu-com/projects/nextjs-grpc/proto
+RUN chown -R 10002:10002 /utkusarioglu-com
+USER node
+ENTRYPOINT scripts/entrypoint.sh
