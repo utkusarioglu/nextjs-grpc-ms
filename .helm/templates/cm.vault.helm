@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ms-vault
+data:
+  config-init.hcl: |
+    {{- .Files.Get "assets/vault-config-init.hcl" | nindent 4 }}

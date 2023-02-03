@@ -17,8 +17,8 @@ services:
     command: /bin/sh -c "while sleep 1000; do :; done"
     # network_mode: host
 
-    networks:
-      - gefyra
+    # networks:
+    #   - gefyra
       # - k3d-nextjs-grpc-k3d-dev-local
       # - nextjs_grpc
     cap_add:
@@ -30,9 +30,9 @@ volumes:
   vscode-extensions:
   vscode-extensions-insiders:
 
-networks:
-  gefyra:
-    external: true
+# networks:
+#   gefyra:
+#     external: true
   # k3d-nextjs-grpc-k3d-dev-local:
   #   external: true
   # nextjs_grpc:

@@ -82,6 +82,9 @@ spec:
                 ) | quote
               }}
               readOnly: true
+            # - name: "vault-api-tls-client-ca"
+            #   mountPath: "/vault/tls"
+            #   readOnly: true
             {{- end -}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -104,4 +107,11 @@ spec:
         - name: {{ .Values.certSecretNames.msGrpcServer | quote }}
           secret:
             secretName: {{ .Values.certSecretNames.msGrpcServer | quote }}
+        # - name: "vault-api-tls-client-ca"
+        #   secret:
+        #     secretName: "vault-api-tls-client-ca"
+        #     optional: false
+        #     items:
+        #       - key: tls.crt
+        #         path: tls.crt
         

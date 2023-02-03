@@ -20,7 +20,8 @@
   //   }
   // },
   "extensions": [
-    "zxh404.vscode-proto3"
+    "zxh404.vscode-proto3",
+    "hashicorp.hcl"
     // "ms-kubernetes-tools.vscode-kubernetes-tools",
     // "mindaro.mindaro"
   ],
