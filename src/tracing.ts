@@ -1,29 +1,26 @@
-require("dotenv").config();
-const opentelemetry = require("@opentelemetry/sdk-node");
-const {
-  getNodeAutoInstrumentations,
-} = require("@opentelemetry/auto-instrumentations-node");
-const { diag, DiagConsoleLogger, DiagLogLevel } = require("@opentelemetry/api");
-const { PrometheusExporter } = require("@opentelemetry/exporter-prometheus");
+import config from "./config";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { diag, DiagConsoleLogger, DiagLogLevel } from "@opentelemetry/api";
+import { PrometheusExporter } from "@opentelemetry/exporter-prometheus";
 // const {
 //   BasicTracerProvider,
 //   SimpleSpanProcessor,
 // } = require("@opentelemetry/sdk-trace-base");
-const { Metadata, credentials } = require("@grpc/grpc-js");
-const {
-  SemanticResourceAttributes,
-} = require("@opentelemetry/semantic-conventions");
-const { Resource } = require("@opentelemetry/resources");
-const {
-  OTLPTraceExporter,
-} = require("@opentelemetry/exporter-trace-otlp-grpc");
-const { MeterProvider } = require("@opentelemetry/sdk-metrics-base");
-const { HostMetrics } = require("@opentelemetry/host-metrics");
+import { Metadata, credentials } from "@grpc/grpc-js";
+import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
+import { Resource } from "@opentelemetry/resources";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
+import { MeterProvider } from "@opentelemetry/sdk-metrics-base";
+import { HostMetrics } from "@opentelemetry/host-metrics";
 
 const prometheusPort = 9464;
 const serviceName = "nextjs-grpc-ms";
 const serviceNamespace = "ms";
-const traceUrl = `grpc://${process.env.OTEL_TRACE_HOST}:${process.env.OTEL_TRACE_PORT}`;
+// const traceUrl = `grpc://${process.env.OTEL_TRACE_HOST}:${process.env.OTEL_TRACE_PORT}`;
+const traceUrl = `grpc://${config.get("OTEL_TRACE_HOST")}:${config.get(
+  "OTEL_TRACE_PORT"
+)}`;
 console.log(`Trace url: ${traceUrl}`);
 
 const instrumentations = [getNodeAutoInstrumentations()];
@@ -47,10 +44,12 @@ const traceExporter = new OTLPTraceExporter({
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
 const metricExporter = new PrometheusExporter(
+  // @ts-ignore
   { port: prometheusPort, startServer: true },
   () => console.log(`metrics @ ms.ms:${prometheusPort}/metrics`)
 );
 const meterProvider = new MeterProvider({
+  // @ts-ignore
   exporter: metricExporter,
   interval: 1000,
 });
@@ -58,14 +57,16 @@ const meterProvider = new MeterProvider({
 // and this command is not given in any of the documentation.
 meterProvider.addMetricReader(metricExporter);
 
+// @ts-ignore
 const hostMetrics = new HostMetrics({ meterProvider, name: serviceName });
 hostMetrics.start();
 
-const sdk = new opentelemetry.NodeSDK({
+const sdk = new NodeSDK({
   resource: new Resource({
     [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
     [SemanticResourceAttributes.SERVICE_NAMESPACE]: serviceNamespace,
   }),
+  // @ts-ignore
   metricExporter,
   traceExporter,
   instrumentations,
@@ -86,6 +87,6 @@ process.on("SIGTERM", () => {
   sdk
     .shutdown()
     .then(() => console.log("Tracing terminated"))
-    .catch((error) => console.log("Error terminating tracing", error))
+    .catch((error: any) => console.log("Error terminating tracing", error))
     .finally(() => process.exit(0));
 });

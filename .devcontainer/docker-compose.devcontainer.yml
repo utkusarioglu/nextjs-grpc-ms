@@ -21,10 +21,10 @@ services:
     #   - gefyra
       # - k3d-nextjs-grpc-k3d-dev-local
       # - nextjs_grpc
-    cap_add:
-      - "NET_ADMIN"
-    devices:
-      - /dev/net/tun:/dev/net/tun
+    # cap_add:
+    #   - "NET_ADMIN"
+    # devices:
+    #   - /dev/net/tun:/dev/net/tun
 
 volumes:
   vscode-extensions:

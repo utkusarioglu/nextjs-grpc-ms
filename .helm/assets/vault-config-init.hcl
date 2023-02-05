@@ -18,12 +18,12 @@ exit_after_auth = true
 pid_file = "/home/vault/.pid"
 
 template = {
-  destination = "/vault/secrets/postgres-storage"
+  destination = "/vault/secrets/postgres-storage.yaml"
   contents = <<-EOF
-    {{- with secret "db/creds/ms" -}}
-    username={{ .Data.username }}
-    password={{ .Data.password }}
-    {{- end }}
+  {{- with secret "db/creds/ms" -}}
+  username: "{{ .Data.username }}"
+  password: "{{ .Data.password }}"
+  {{- end }}
   EOF
 }
 

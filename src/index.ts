@@ -1,39 +1,15 @@
-#!/usr/local/bin/node
-require("dotenv").config();
-const http = require("http");
+import { api } from "@opentelemetry/sdk-node";
+import config from "./config";
+import http from "http";
 const PROTO_PATH = "../proto/greeting.proto";
-const grpc = require("@grpc/grpc-js");
-const protoLoader = require("@grpc/proto-loader");
-const fs = require("fs");
-const util = require("util");
+import * as grpc from "@grpc/grpc-js";
+import * as protoLoader from "@grpc/proto-loader";
+import fs from "fs";
+import util from "util";
+import { countryList } from "./models/inflation/inflation.model";
 const readFile = util.promisify(fs.readFile);
-const { countryList } = require("./models/inflation/inflation.model");
 
-const grpcServerCertPath = [
-  // "PROJECT_ROOT_PATH",
-  // "REPO_SUBPATH",
-  "CERTS_PATH",
-  "GRPC_SERVER_CERT_SUBPATH",
-]
-  .map((envVarName) => {
-    const envVar = process.env[envVarName];
-    if (!envVar) {
-      throw new Error(`Env var ${envVarName} needs to be set.`);
-    }
-    return envVar;
-  })
-  .join("/");
-console.log({ grpcServerCertPath });
-
-function main() {
-  console.log("main called");
-  console.log(
-    "process.env.GRPC_CHECK_CLIENT_CERT: ",
-    process.env.GRPC_CHECK_CLIENT_CERT,
-    process.env.GRPC_CHECK_CLIENT_CERT === "true"
-  );
-  const opentelemetry = require("@opentelemetry/api");
-
+export function main() {
   const greetingProtoDef = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
     longs: String,
@@ -43,17 +19,18 @@ function main() {
   });
 
   const greetingProto = grpc.loadPackageDefinition(greetingProtoDef);
-
   const server = new grpc.Server();
 
+  // @ts-ignore
   server.addService(greetingProto.ms.nextjs_grpc.Greeter.service, {
+    // @ts-ignore
     sendGreeting: async (call, callback) => {
-      const span = opentelemetry.trace.getSpan(opentelemetry.context.active());
-      span.addEvent("Sending Greeting");
-      span.setAttribute("some-attribute", "set some attribute");
+      const span = api.trace.getSpan(api.context.active());
+      span?.addEvent("Sending Greeting");
+      span?.setAttribute("some-attribute", "set some attribute");
       try {
         const response = await countryList(["USA", "TUR"]);
-        const { name, age, job, fav_movies } = call.request;
+        // const { name, age, job, fav_movies } = call.request;
         const delayDuration = Math.random() * 3000 + 1000;
         const message = [
           // `Your name is ${name}`,
@@ -66,11 +43,11 @@ function main() {
           // "<br>",
           JSON.stringify(response, null, 2),
         ];
-        span.addEvent("delay", { duration: delayDuration });
+        span?.addEvent("delay", { duration: delayDuration });
         callback(null, { greeting: message.join(", ") });
-      } catch (e) {
-        span.recordException(e);
-        span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR });
+      } catch (e: any) {
+        span?.recordException(e);
+        span?.setStatus({ code: api.SpanStatusCode.ERROR });
         console.log(e);
       } finally {
         // span.addEvent("Finished Sending Greeting");
@@ -79,7 +56,11 @@ function main() {
     },
   });
 
-  const url = `${process.env.HOST}:${process.env.PORT}`;
+  const url = [config.get("HOST"), config.get("PORT")].join(":");
+  const grpcServerCertPath = [
+    config.get("CERTS_PATH"),
+    config.get("GRPC_SERVER_CERT_SUBPATH"),
+  ].join("/");
   const crtPromise = readFile(`${grpcServerCertPath}/tls.crt`);
   const keyPromise = readFile(`${grpcServerCertPath}/tls.key`);
 
@@ -93,7 +74,7 @@ function main() {
           cert_chain: crt,
         },
       ],
-      process.env.GRPC_CHECK_CLIENT_CERT === "true"
+      config.get("GRPC_CHECK_CLIENT_CERT")
     );
     server.bindAsync(url, credentials, (error, _port) => {
       if (error) {
@@ -105,7 +86,7 @@ function main() {
     });
   });
 
-  const requestListener = function (req, res) {
+  const requestListener: http.RequestListener = function (_, res) {
     res.writeHead(200);
     res.end("Hello, World!a!");
   };
@@ -113,5 +94,3 @@ function main() {
   const httpServer = http.createServer(requestListener);
   httpServer.listen(8000);
 }
-
-module.exports = { main };

@@ -1,15 +1,24 @@
+import config from "../../config";
+
+console.log({
+  type: "postgres-pass",
+    user: config.get("username"),
+    password: config.get("password"),
+  
+})
+
 const knex = require("knex")({
   client: "pg",
   connection: {
     host: "postgres-storage.ms",
     port: 5432,
-    user: "postgres",
-    password: "postgres",
+    user: config.get("username"),
+    password: config.get("password"),
     database: "inflation",
   },
 });
 
-const countryList = (countryCodes) =>
+export const countryList = (countryCodes: string[]) =>
   knex
     .select({
       countryName: "country_name",
@@ -23,11 +32,12 @@ const countryList = (countryCodes) =>
       range: "range",
       stdDev: "stddev",
       variance: "variance",
+      // dummy: "dummy = 'dummy'"
     })
     .withSchema("inflation")
     .from("decade_stats")
     .whereIn("country_code", countryCodes);
 
-module.exports = {
-  countryList,
-};
+// module.exports = {
+//   countryList,
+// };
