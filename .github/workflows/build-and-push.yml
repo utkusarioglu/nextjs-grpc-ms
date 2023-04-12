@@ -128,21 +128,7 @@ jobs:
             USERNAME=${{ env.CONTAINER_USERNAME }}
             GROUP=${{ env.CONTAINER_GROUP }}
 
-      - name: Build devcontainer ${{ steps.variables.outputs.short_dev_image_ref }}
-        if: steps.run_state.outputs.run_docker_build == 'true'
-        id: devcontainer_build
-        uses: devcontainers/ci@v0.2
-        env:
-          IMAGE_NAME: ${{ steps.variables.outputs.image_name }}
-          IMAGE_TAG: ${{ steps.variables.outputs.image_tag }}
-        with:
-          imageName: ${{ steps.variables.outputs.image_name }}
-          imageTag: ${{ steps.variables.outputs.image_tag }}
-          subFolder: ms # --
-          # runCmd: /scripts/devcontainer-check.sh
-          runCmd: "echo 'no tests defined yet'"
-
-      - name: Push devcontainer ${{ steps.variables.outputs.short_dev_image_ref }}
+      - name: Push prod container ${{ steps.variables.outputs.image_ref }}
         if: steps.run_state.outputs.run_docker_build == 'true'
         run: docker push ${{ steps.variables.outputs.image_ref }}
 
