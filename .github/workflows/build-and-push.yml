@@ -35,22 +35,22 @@ jobs:
       - name: Checkout ms
         uses: actions/checkout@v3
         with:
-          fetch-depth: 3
-          path: ${{ matrix.images.repoRelPath }} # --
+          fetch-depth: 2
+          path: ${{ matrix.images.repoRelPath }} 
 
       - name: Checkout proto
         uses: actions/checkout@v3
         with:
           repository: utkusarioglu/nextjs-grpc-proto
-          fetch-depth: 3
-          path: proto # --
+          fetch-depth: 2
+          path: proto 
         
 
       - name: Get changed files
         id: changed_files
         uses: tj-actions/changed-files@v25
         with:
-          path: ${{ matrix.images.repoRelPath }} # --
+          path: ${{ matrix.images.repoRelPath }} 
           files: |
             ${{ matrix.images.dockerfile }}
             ${{ matrix.images.readmeFile }}
@@ -76,11 +76,10 @@ jobs:
         run: |
           image_name=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.CONTAINER_NAME }}
           repo_tag=${{ github.ref_name }}
-          if [ -z "${{ matrix.images.imageTagPrefix }}" ]; then
-            image_tag=${repo_tag//\//-}
-          else 
-            image_tag=${{ matrix.images.imageTagPrefix }}.${repo_tag//\//-}
+          if [ ! -z "${{ matrix.images.imageTagPrefix }}" ]; then
+            image_tag_prefix="${repo_tag//\//-}."
           fi
+          image_tag="$image_tag_prefix${repo_tag//\//-}"
           dev_image_tag="dev-${image_tag}"
           image_ref="${image_name}:${image_tag}"
           short_image_ref="${{ env.CONTAINER_NAME }}:${image_tag}"
