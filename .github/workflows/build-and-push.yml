@@ -46,9 +46,9 @@ jobs:
           path: ms # --
 
       - name: Checkout proto
-        repository: utkusarioglu/nextjs-grpc-proto
         uses: actions/checkout@v3
         with:
+          repository: utkusarioglu/nextjs-grpc-proto
           fetch-depth: 3
           path: proto # --
         
