@@ -136,7 +136,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ steps.variables.outputs.image_name }}
           short-description: MS microservice containers for NextJS-Grpc
-          readme-filepath: ${{ matrix.images.readmeFile }}
+          readme-filepath: ms/${{ matrix.images.readmeFile }}
 
       - name: Move cache
         run: |
