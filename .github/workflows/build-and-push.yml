@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  CONTAINER_NAME: nextjs-grpc-ms
+  CONTAINER_NAME: ms-nextjsgprc-projects-utkusarioglu-com
   CONTAINER_USERNAME: 10011
   CONTAINER_GROUP: 10011
   CACHE_TO_DEST: /tmp/.buildx-cache-new
@@ -25,19 +25,11 @@ jobs:
     strategy:
       matrix:
         images:
-          - imageTagPrefix: "1"
+          - imageTagPrefix: ""
             repoRelPath: ms
             dockerfile: .docker/Dockerfile.dev
             additionalFilesToWatch: ""
             readmeFile: .docker/DOCKER_README.md
-          # - imageTag: 18-slim
-          #   dockerfile: src/Dockerfile.dev
-          #   additionalFilesToWatch: ""
-          #   readmeFile: src/DOCKER_README.md
-          # - imageTag: 17-slim
-          #   dockerfile: src/Dockerfile.dev
-          #   additionalFilesToWatch: ""
-          #   readmeFile: src/DOCKER_README.md
 
     steps:
       - name: Checkout ms
@@ -56,7 +48,7 @@ jobs:
 
       - name: Get changed files
         id: changed_files
-        uses: tj-actions/changed-files@v25
+        uses: tj-actions/changed-files@v35
         with:
           path: ${{ matrix.images.repoRelPath }} # --
           files: |
@@ -72,10 +64,10 @@ jobs:
             [ ${{ steps.changed_files.outputs.any_modified }} == true ] || \
             [ ${{ github.event_name }} == workflow_dispatch ] \
           ); then
-            echo "::set-output name=run_docker_build::true"
+            echo "run_docker_build=true" >> $GITHUB_OUTPUT
             echo "::debug::Docker build will carry out as expected."
           else
-            echo "::set-output name=run_docker_build::false"
+            echo "run_docker_build=false" >> $GITHUB_OUTPUT
             echo "Docker build is cancelled as the required conditions for a run haven't been met"
           fi
 
@@ -84,20 +76,24 @@ jobs:
         run: |
           image_name=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.CONTAINER_NAME }}
           repo_tag=${{ github.ref_name }}
-          image_tag=${{ matrix.images.imageTagPrefix }}.${repo_tag//\//-}
+          if [ -z "${{ matrix.images.imageTagPrefix }}" ]; then
+            image_tag=${repo_tag//\//-}
+          else 
+            image_tag=${{ matrix.images.imageTagPrefix }}.${repo_tag//\//-}
+          fi
           dev_image_tag="dev-${image_tag}"
           image_ref="${image_name}:${image_tag}"
           short_image_ref="${{ env.CONTAINER_NAME }}:${image_tag}"
           dev_image_ref="$image_name:$dev_image_tag"
           short_dev_image_ref="${{ env.CONTAINER_NAME }}:$dev_image_tag"
 
-          echo "::set-output name=image_name::$image_name"
-          echo "::set-output name=image_tag::$image_tag"
-          echo "::set-output name=dev_image_tag::$dev_image_tag"
-          echo "::set-output name=image_ref::$image_ref"
-          echo "::set-output name=short_image_ref::$short_image_ref"
-          echo "::set-output name=dev_image_ref::$dev_image_ref"
-          echo "::set-output name=short_dev_image_ref::$short_dev_image_ref"
+          echo "image_name=$image_name" >> $GITHUB_OUTPUT
+          echo "image_tag=$image_tag" >> $GITHUB_OUTPUT
+          echo "dev_image_tag=$dev_image_tag" >> $GITHUB_OUTPUT
+          echo "image_ref=$image_ref" >> $GITHUB_OUTPUT
+          echo "short_image_ref=$short_image_ref" >> $GITHUB_OUTPUT
+          echo "dev_image_ref=$dev_image_ref" >> $GITHUB_OUTPUT
+          echo "short_dev_image_ref=$short_dev_image_ref" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         if: steps.run_state.outputs.run_docker_build == 'true'
