@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 2
-        path: $REPO_REL_PATH
+          path: $REPO_REL_PATH
         
 
       - name: Get changed files
