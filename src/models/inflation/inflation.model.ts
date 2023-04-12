@@ -1,10 +1,9 @@
 import config from "../../config";
 
 console.log({
-  type: "postgres-pass",
-    user: config.get("username"),
-    password: config.get("password"),
-  
+  type: "postgres-pass-for-ms",
+  user: config.get("username"),
+  password: config.get("password"),
 })
 
 const knex = require("knex")({

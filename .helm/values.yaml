@@ -30,7 +30,7 @@ podAnnotations:
   vault.hashicorp.com/agent-inject: "true"
   vault.hashicorp.com/agent-pre-populate-only: "true"
   vault.hashicorp.com/tls-secret: "vault-api-tls-client-ca"
-  vault.hashicorp.com/agent-configmap: "ms-vault"
+  vault.hashicorp.com/agent-configmap: "vault-ms-postgres-storage"
   
 
 podSecurityContext:

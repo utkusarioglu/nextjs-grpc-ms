@@ -18,9 +18,10 @@ exit_after_auth = true
 pid_file = "/home/vault/.pid"
 
 template = {
-  destination = "/vault/secrets/postgres-storage.yaml"
+  # TODO this path needs to include `inflation`. And that change probably requires rebuilding the image
+  destination = "/vault/secrets/postgres-storage/inflation.yaml"
   contents = <<-EOF
-  {{- with secret "db/creds/ms" -}}
+  {{- with secret "postgres-storage/inflation/creds/ms" -}}
   username: "{{ .Data.username }}"
   password: "{{ .Data.password }}"
   {{- end }}
