@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         images:
-          - imageTag: "1"
+          - imageTagPrefix: "1"
             repoRelPath: ms
             dockerfile: .docker/Dockerfile.dev
             additionalFilesToWatch: ""
@@ -84,7 +84,7 @@ jobs:
         run: |
           image_name=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.CONTAINER_NAME }}
           repo_tag=${{ github.ref_name }}
-          image_tag=${{ matrix.images.imageTag }}.${repo_tag//\//-}
+          image_tag=${{ matrix.images.imageTagPrefix }}.${repo_tag//\//-}
           dev_image_tag="dev-${image_tag}"
           image_ref="${image_name}:${image_tag}"
           short_image_ref="${{ env.CONTAINER_NAME }}:${image_tag}"
@@ -124,7 +124,7 @@ jobs:
           cache-from: type=local,src=${{ env.CACHE_FROM_SRC }}
           cache-to: type=local,mode=max,dest=${{ env.CACHE_TO_DEST }}
           build-args: |
-            IMAGE_TAG=${{ matrix.images.imageTag }}
+            IMAGE_TAG=${{ steps.variables.outputs.image_tag }}
             ROOT_PASS=${{ secrets.DOCKER_IMAGE_ROOT_PASS }}
             USERNAME=${{ env.CONTAINER_USERNAME }}
             GROUP=${{ env.CONTAINER_GROUP }}
