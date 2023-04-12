@@ -42,14 +42,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          fetch-depth: 2
+          fetch-depth: 3
           path: ms
         
 
       - name: Get changed files
         id: changed_files
-        uses: tj-actions/changed-files@v25
+        uses: tj-actions/changed-files@v35
         with:
+          path: ms
           files: |
             ${{ matrix.images.dockerfile }}
             ${{ matrix.images.readmeFile }}
