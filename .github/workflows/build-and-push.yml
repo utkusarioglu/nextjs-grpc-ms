@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         images:
-          - imageTag: ms-test
+          - imageTag: "1"
             dockerfile: .docker/Dockerfile.dev
             additionalFilesToWatch: ""
             readmeFile: .docker/DOCKER_README.md
@@ -127,10 +127,6 @@ jobs:
             ROOT_PASS=${{ secrets.DOCKER_IMAGE_ROOT_PASS }}
             USERNAME=${{ env.CONTAINER_USERNAME }}
             GROUP=${{ env.CONTAINER_GROUP }}
-
-      - name: Push prod container ${{ steps.variables.outputs.image_ref }}
-        if: steps.run_state.outputs.run_docker_build == 'true'
-        run: docker push ${{ steps.variables.outputs.image_ref }}
 
       - name: Set Docker Hub description
         if: steps.run_state.outputs.run_docker_build == 'true'
