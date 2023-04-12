@@ -11,6 +11,7 @@ on:
   workflow_dispatch:
 
 env:
+  REPO_REL_PATH: ms
   CONTAINER_NAME: nextjs-grpc-ms
   CONTAINER_USERNAME: 10011
   CONTAINER_GROUP: 10011
@@ -26,9 +27,9 @@ jobs:
       matrix:
         images:
           - imageTag: ms-nextjsgprc-projects-utkusarioglu-com
-            dockerfile: src/.docker/Dockerfile.dev
-            additionalFilesToWatch: "src"
-            readmeFile: src/.docker/DOCKER_README.md
+            dockerfile: $REPO_REL_PATH/.docker/Dockerfile.dev
+            additionalFilesToWatch: "$REPO_REL_PATH/src"
+            readmeFile: $REPO_REL_PATH/.docker/DOCKER_README.md
           # - imageTag: 18-slim
           #   dockerfile: src/Dockerfile.dev
           #   additionalFilesToWatch: ""
@@ -40,9 +41,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
+        path: $REPO_REL_PATH
+        
 
       - name: Get changed files
         id: changed_files
@@ -52,7 +55,7 @@ jobs:
             ${{ matrix.images.dockerfile }}
             ${{ matrix.images.readmeFile }}
             ${{ matrix.images.additionalFilesToWatch }}
-            .github/workflows/build-and-push.yml
+            $REPO_REL_PATH/.github/workflows/build-and-push.yml
 
       - name: Declare run state
         id: run_state
@@ -129,7 +132,8 @@ jobs:
           imageName: ${{ steps.variables.outputs.image_name }}
           imageTag: ${{ steps.variables.outputs.image_tag }}
           subFolder: src
-          runCmd: /scripts/devcontainer-check.sh
+          # runCmd: /scripts/devcontainer-check.sh
+          runCmd: "echo 'no tests defined yet'"
 
       - name: Push devcontainer ${{ steps.variables.outputs.short_dev_image_ref }}
         if: steps.run_state.outputs.run_docker_build == 'true'
@@ -142,7 +146,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ steps.variables.outputs.image_name }}
-          short-description: NodeJS devcontainers
+          short-description: MS microservice containers for NextJS-Grpc
           readme-filepath: ${{ matrix.images.readmeFile }}
 
       - name: Move cache
