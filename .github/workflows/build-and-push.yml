@@ -27,7 +27,7 @@ jobs:
         images:
           - imageTag: ms-test
             dockerfile: ms/.docker/Dockerfile.dev
-            additionalFilesToWatch: "ms/src"
+            additionalFilesToWatch: ""
             readmeFile: ms/.docker/DOCKER_README.md
           # - imageTag: 18-slim
           #   dockerfile: src/Dockerfile.dev
@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           fetch-depth: 2
           path: ms
