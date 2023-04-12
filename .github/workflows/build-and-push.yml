@@ -138,7 +138,7 @@ jobs:
         with:
           imageName: ${{ steps.variables.outputs.image_name }}
           imageTag: ${{ steps.variables.outputs.image_tag }}
-          subFolder: src
+          subFolder: ms # --
           # runCmd: /scripts/devcontainer-check.sh
           runCmd: "echo 'no tests defined yet'"
 
