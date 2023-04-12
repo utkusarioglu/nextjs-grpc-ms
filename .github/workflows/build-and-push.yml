@@ -39,11 +39,18 @@ jobs:
           #   readmeFile: src/DOCKER_README.md
 
     steps:
-      - name: Checkout code
+      - name: Checkout ms
         uses: actions/checkout@v3
         with:
           fetch-depth: 3
           path: ms # --
+
+      - name: Checkout proto
+        repository: utkusarioglu/nextjs-grpc-proto
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 3
+          path: proto # --
         
 
       - name: Get changed files
