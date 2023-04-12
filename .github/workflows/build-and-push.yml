@@ -11,7 +11,6 @@ on:
   workflow_dispatch:
 
 env:
-  REPO_REL_PATH: ms
   CONTAINER_NAME: nextjs-grpc-ms
   CONTAINER_USERNAME: 10011
   CONTAINER_GROUP: 10011
@@ -26,10 +25,10 @@ jobs:
     strategy:
       matrix:
         images:
-          - imageTag: ms-nextjsgprc-projects-utkusarioglu-com
-            dockerfile: $REPO_REL_PATH/.docker/Dockerfile.dev
-            additionalFilesToWatch: "$REPO_REL_PATH/src"
-            readmeFile: $REPO_REL_PATH/.docker/DOCKER_README.md
+          - imageTag: ms-test
+            dockerfile: ms/.docker/Dockerfile.dev
+            additionalFilesToWatch: "ms/src"
+            readmeFile: ms/.docker/DOCKER_README.md
           # - imageTag: 18-slim
           #   dockerfile: src/Dockerfile.dev
           #   additionalFilesToWatch: ""
@@ -44,7 +43,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 2
-          path: $REPO_REL_PATH
+          path: ms
         
 
       - name: Get changed files
@@ -55,7 +54,7 @@ jobs:
             ${{ matrix.images.dockerfile }}
             ${{ matrix.images.readmeFile }}
             ${{ matrix.images.additionalFilesToWatch }}
-            $REPO_REL_PATH/.github/workflows/build-and-push.yml
+            ms/.github/workflows/build-and-push.yml
 
       - name: Declare run state
         id: run_state
