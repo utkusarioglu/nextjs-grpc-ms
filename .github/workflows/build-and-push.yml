@@ -118,7 +118,7 @@ jobs:
         with:
           context: .
           tags: ${{ steps.variables.outputs.image_ref }}
-          file: ${{ matrix.images.dockerfile }} # ---
+          file: ${{ matrix.images.repoRelPath }}/${{ matrix.images.dockerfile }} # ---
           push: true
           pull: false
           cache-from: type=local,src=${{ env.CACHE_FROM_SRC }}
