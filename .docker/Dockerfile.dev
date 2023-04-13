@@ -11,6 +11,7 @@ WORKDIR  /utkusarioglu-com/projects/nextjs-grpc/ms
 COPY ms /utkusarioglu-com/projects/nextjs-grpc/ms
 COPY proto /utkusarioglu-com/projects/nextjs-grpc/proto
 RUN chown -R $CONTAINER_USERNAME:$CONTAINER_GROUP /utkusarioglu-com
+RUN yarn
 RUN yarn build
 
 FROM node:19-slim AS runner
