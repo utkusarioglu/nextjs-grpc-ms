@@ -1,11 +1,12 @@
 FROM node:19-slim AS builder
 
-ARG ROOT_PASS=ROOT
-ARG USERNAME=1000
-ARG GROUP=1000
+ARG ROOT_PASS
+ARG USERNAME
+ARG GROUP
 
 RUN sh -c 'echo "root:$ROOT_PASS" | chpasswd'
 RUN sh -c 'echo "node:$ROOT_PASS" | chpasswd'
+
 RUN apt update && apt install -y vim curl sudo
 WORKDIR  /utkusarioglu-com/projects/nextjs-grpc/ms
 COPY ms /utkusarioglu-com/projects/nextjs-grpc/ms
@@ -15,8 +16,14 @@ RUN yarn
 RUN yarn build
 
 FROM node:19-slim AS runner
+
+ARG ROOT_PASS
+ARG USERNAME
+ARG GROUP
+
 RUN sh -c 'echo "root:$ROOT_PASS" | chpasswd'
 RUN sh -c 'echo "node:$ROOT_PASS" | chpasswd'
+
 WORKDIR  /utkusarioglu-com/projects/nextjs-grpc/ms
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/dist dist
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/scripts scripts
