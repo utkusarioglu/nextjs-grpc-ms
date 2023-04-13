@@ -29,6 +29,12 @@ COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/dist dist
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/scripts scripts
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/package.json package.json
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/yarn.lock yarn.lock
+
+WORKDIR  /utkusarioglu-com/projects/nextjs-grpc
+COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/proto proto
+
+WORKDIR  /utkusarioglu-com/projects/nextjs-grpc/ms
 RUN yarn --frozen-lockfile --prod
+
 USER $USERNAME
 ENTRYPOINT scripts/start.sh
