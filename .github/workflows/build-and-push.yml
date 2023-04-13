@@ -32,7 +32,7 @@ jobs:
             readmeFile: .docker/DOCKER_README.md
 
     steps:
-      - name: Checkout ms
+      - name: Checkout ${{ matrix.images.repoRelPath }}
         uses: actions/checkout@v3
         with:
           fetch-depth: 2
