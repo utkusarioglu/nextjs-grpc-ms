@@ -1,12 +1,12 @@
 import { api } from "@opentelemetry/sdk-node";
 import config from "./config";
 import http from "http";
-const PROTO_PATH = "../proto/greeting.proto";
+const PROTO_PATH = "../proto/src/inflation/decade-stats.proto";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import fs from "fs";
 import util from "util";
-import { countryList } from "./models/inflation/inflation.model";
+import { decadeStats } from "./models/inflation/inflation.model";
 const readFile = util.promisify(fs.readFile);
 
 export function main() {
@@ -18,38 +18,24 @@ export function main() {
     oneofs: true,
   });
 
-  const greetingProto = grpc.loadPackageDefinition(greetingProtoDef);
+  const inflationProto = grpc.loadPackageDefinition(greetingProtoDef);
   const server = new grpc.Server();
 
   // @ts-ignore
-  server.addService(greetingProto.ms.nextjs_grpc.Greeter.service, {
-    // @ts-ignore
-    sendGreeting: async (call, callback) => {
+  server.addService(inflationProto.ms.nextjs_grpc.Inflation.service, {
+    decadeStats: async (_call: any, callback: any) => {
       const span = api.trace.getSpan(api.context.active());
-      span?.addEvent("Sending Greeting");
+      span?.addEvent("Retrieving Inflation decade stats");
       span?.setAttribute("some-attribute", "set some attribute");
       try {
-        const response = await countryList(["USA", "TUR"]);
-        // const { name, age, job, fav_movies } = call.request;
-        const delayDuration = Math.random() * 3000 + 1000;
-        const message = [
-          // `Your name is ${name}`,
-          // `you are ${age} years old`,
-          // `you are a ${job.toLowerCase()}`,
-          // `and your favorite movies are: ${fav_movies.join(", ")}`,
-          // `You like the number ${Math.floor(Math.random() * 10)}`,
-          // `is local: ${process.env.IS_LOCAL}`,
-          // `is aws: ${process.env.IS_AWS}`,
-          // "<br>",
-          JSON.stringify(response, null, 2),
-        ];
-        span?.addEvent("delay", { duration: delayDuration });
-        callback(null, { greeting: message.join(", ") });
+        const response = await decadeStats(["USA", "TUR"]);
+        callback(null, response);
       } catch (e: any) {
         span?.recordException(e);
         span?.setStatus({ code: api.SpanStatusCode.ERROR });
         console.log(e);
       } finally {
+        // TODO find out if it's safe to enable these
         // span.addEvent("Finished Sending Greeting");
         // span.end();
       }

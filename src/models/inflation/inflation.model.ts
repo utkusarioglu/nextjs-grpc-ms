@@ -1,23 +1,7 @@
-import config from "../../config";
+import { DecadeStats } from "./inflation.model.types";
+import { knex } from "_services/postgres-storage/postgres-storage.service";
 
-console.log({
-  type: "postgres-pass-for-ms",
-  user: config.get("username"),
-  password: config.get("password"),
-})
-
-const knex = require("knex")({
-  client: "pg",
-  connection: {
-    host: "postgres-storage.ms",
-    port: 5432,
-    user: config.get("username"),
-    password: config.get("password"),
-    database: "inflation",
-  },
-});
-
-export const countryList = (countryCodes: string[]) =>
+export const decadeStats: DecadeStats = (countryCodes) =>
   knex
     .select({
       countryName: "country_name",
@@ -31,12 +15,7 @@ export const countryList = (countryCodes: string[]) =>
       range: "range",
       stdDev: "stddev",
       variance: "variance",
-      // dummy: "dummy = 'dummy'"
     })
     .withSchema("inflation")
     .from("decade_stats")
     .whereIn("country_code", countryCodes);
-
-// module.exports = {
-//   countryList,
-// };
