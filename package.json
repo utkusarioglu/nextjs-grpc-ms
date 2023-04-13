@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "scripts/dev.sh",
     "start": "scripts/start.sh",
-    "debug": "scripts/debug.sh"
+    "debug": "scripts/debug.sh",
+    "build": "yarn tsc"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.6.8",
