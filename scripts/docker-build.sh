@@ -3,6 +3,7 @@
 current_dir=${0%/*}
 helm_chart_path=$current_dir/../.helm
 dockerfile_path=$current_dir/../.docker/Dockerfile.dev
+
 version=$(cat $helm_chart_path/Chart.yaml | yq '.appVersion')
 image_name=$(cat $helm_chart_path/values.yaml | yq '.image.repository')
 image_reference="$image_name:$version"

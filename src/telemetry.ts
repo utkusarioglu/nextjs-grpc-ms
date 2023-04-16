@@ -55,7 +55,7 @@ const meterProvider = new MeterProvider({
 });
 // this is probably temporary, without this prometheus metrics don't work
 // and this command is not given in any of the documentation.
-meterProvider.addMetricReader(metricExporter);
+// meterProvider.addMetricReader(metricExporter);
 
 // @ts-ignore
 const hostMetrics = new HostMetrics({ meterProvider, name: serviceName });
@@ -72,16 +72,17 @@ const sdk = new NodeSDK({
   instrumentations,
 });
 
-sdk.start().then(() => {
-  const { main } = require("./index");
-  console.log("sdk.start().then() running");
-  const meter = meterProvider.getMeter(serviceName);
-  const counter = meter.createCounter("some_counter", {
-    description: "some test value",
-  });
-  counter.add(3);
-  main();
-});
+sdk.start()
+//   .then(() => {
+//   const { main } = require("./index");
+//   console.log("sdk.start().then() running");
+//   const meter = meterProvider.getMeter(serviceName);
+//   const counter = meter.createCounter("some_counter", {
+//     description: "some test value",
+//   });
+//   counter.add(3);
+//   main();
+// });
 
 process.on("SIGTERM", () => {
   sdk

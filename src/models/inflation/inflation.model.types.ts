@@ -1,4 +1,6 @@
-interface DecadeStatsReturn {
+// type DecadeStatsReturn = DecadeStatsRow[]
+  
+interface DecadeStatsRow {
   countryName: string;
   countryCode: string;
   decade: number; // uint
@@ -12,6 +14,12 @@ interface DecadeStatsReturn {
   variance: number; // float
 }
 
-type DecadeStatsParams = [string[]];
+interface StreamCallbacks {
+  write: (data: DecadeStatsRow) => void,
+  end: () => void
+}
 
-export type DecadeStats = (...params: DecadeStatsParams) => Promise<DecadeStatsReturn>;
+type DecadeStatsParams = [string[], StreamCallbacks];
+
+// export type DecadeStats = (...params: DecadeStatsParams) => Promise<DecadeStatsReturn>;
+export type DecadeStats = (...params: DecadeStatsParams) => void;

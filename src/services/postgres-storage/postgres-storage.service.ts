@@ -1,10 +1,11 @@
-import config from "_config";
+import config from "../../config";
 
 console.log({
   type: "postgres-pass-for-ms",
   user: config.get("username"),
   password: config.get("password"),
 });
+
 export const knex = require("knex")({
   client: "pg",
   connection: {
