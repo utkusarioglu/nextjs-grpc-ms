@@ -90,6 +90,7 @@ env:
   GRPC_TRACE: all
   GRPC_CHECK_CLIENT_CERT: true
   ENABLE_INSTRUMENTATION: "FALSE"
+  INSECURE_GRPC: "TRUE"
 
 cloudProvider:
   isLocal: false

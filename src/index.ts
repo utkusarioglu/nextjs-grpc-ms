@@ -9,7 +9,9 @@ import util from "util";
 import { decadeStats } from "./models/inflation/inflation.model";
 const readFile = util.promisify(fs.readFile);
 
-const INSECURE = false
+const insecureGrpc = ["1", "TRUE", "YES"].includes(
+  (process.env["INSECURE_GRPC"] || "false").toUpperCase()
+);
 
 const url = [config.get("HOST"), config.get("PORT")].join(":");
 const grpcServerCertPath = [
@@ -56,7 +58,7 @@ export function main() {
 
   Promise.all([crtPromise, keyPromise]).then(([crt, key]) => {
     
-    const credentials = INSECURE
+    const credentials = insecureGrpc
       ? grpc.ServerCredentials.createInsecure()
       : grpc.ServerCredentials.createSsl(
         crt,
