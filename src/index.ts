@@ -65,7 +65,6 @@ export function main() {
   });
 
   Promise.all([crtPromise, keyPromise]).then(([crt, key]) => {
-    
     const credentials = insecureGrpc
       ? grpc.ServerCredentials.createInsecure()
       : grpc.ServerCredentials.createSsl(
