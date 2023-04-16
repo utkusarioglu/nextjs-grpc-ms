@@ -9,7 +9,7 @@ import util from "util";
 import { decadeStats } from "./models/inflation/inflation.model";
 const readFile = util.promisify(fs.readFile);
 
-const INSECURE = true
+const INSECURE = false
 
 const url = [config.get("HOST"), config.get("PORT")].join(":");
 const grpcServerCertPath = [
