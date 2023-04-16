@@ -73,9 +73,9 @@ const sdk = new NodeSDK({
 });
 
 sdk.start();
+const { main } = require("./index");
 main();
 //   .then(() => {
-//   const { main } = require("./index");
 //   console.log("sdk.start().then() running");
 //   const meter = meterProvider.getMeter(serviceName);
 //   const counter = meter.createCounter("some_counter", {
