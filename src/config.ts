@@ -6,7 +6,7 @@ nconf
   .env({
     transform: (prop: Record<string, any>) => {
       if (prop["key"] === "GRPC_CHECK_CLIENT_CERT" && !!prop["value"]) {
-        ["FALSE", "0"].includes(prop["value"].toUpperCase());
+        ["FALSE", "0", "NO"].includes(prop["value"].toUpperCase());
         prop["value"] = false;
       }
       return prop;
@@ -32,6 +32,7 @@ nconf
 
 nconf.defaults({
   GRPC_CHECK_CLIENT_CERT: true,
+  INSECURE_GRPC: false
 });
 
 export default nconf;

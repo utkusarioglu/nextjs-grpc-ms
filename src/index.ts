@@ -9,12 +9,15 @@ import util from "util";
 import { decadeStats } from "./models/inflation/inflation.model";
 const readFile = util.promisify(fs.readFile);
 
-const insecureGrpc = ["1", "TRUE", "YES"].includes(
-  (process.env["INSECURE_GRPC"] || "false").toUpperCase()
-);
+// const insecureGrpc = ["1", "TRUE", "YES"].includes(
+//   (process.env["INSECURE_GRPC"] || "false").toUpperCase()
+// );
+const insecureGrpc = config.get("INSECURE_GRPC");
 
 if (insecureGrpc) {
   console.log({ msg: "starting insecure grpc", insecureGrpc });
+} else {
+  console.log({ msg: "grpc is secure", insecureGrpc });
 }
 
 const url = [config.get("HOST"), config.get("PORT")].join(":");
