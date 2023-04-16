@@ -32,15 +32,15 @@ const MOCK_VALUE = [{
 
 export const decadeStats: DecadeStats = (countryCodes, stream) =>
   mock
-    ? (() => { 
-      console.log("reached", countryCodes)
-      MOCK_VALUE.forEach((row) => {
-        stream.write(row);
-      })
-      stream.end()
-      // Promise.resolve(MOCK_VALUE)
-    })()
-    : knex
+    ? (() => {
+        console.log("reached mock db", countryCodes)
+        MOCK_VALUE.forEach((row) => {
+          stream.write(row);
+        })
+        stream.end()
+      })()
+    : (() => {
+      const knexStream = knex
         .select({
           countryName: "country_name",
           countryCode: "country_code",
@@ -58,6 +58,10 @@ export const decadeStats: DecadeStats = (countryCodes, stream) =>
         .from("decade_stats")
         .whereIn("country_code", countryCodes)
         .stream();
+      console.log({ knexStream });
+      knexStream.pipe(stream);
+      return knexStream;
+    })()
     // : knex
     //   .select({
     //     countryName: "country_name",
