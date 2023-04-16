@@ -72,7 +72,8 @@ const sdk = new NodeSDK({
   instrumentations,
 });
 
-sdk.start()
+sdk.start();
+main();
 //   .then(() => {
 //   const { main } = require("./index");
 //   console.log("sdk.start().then() running");
