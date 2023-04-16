@@ -41,7 +41,7 @@ const traceExporter = new OTLPTraceExporter({
 // traceProvider.addSpanProcessor(new SimpleSpanProcessor(traceExporter));
 // traceProvider.register();
 
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
 
 const metricExporter = new PrometheusExporter(
   // @ts-ignore
