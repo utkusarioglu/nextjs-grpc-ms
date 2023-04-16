@@ -13,6 +13,10 @@ const insecureGrpc = ["1", "TRUE", "YES"].includes(
   (process.env["INSECURE_GRPC"] || "false").toUpperCase()
 );
 
+if (insecureGrpc) {
+  console.log({ msg: "starting insecure grpc", insecureGrpc });
+}
+
 const url = [config.get("HOST"), config.get("PORT")].join(":");
 const grpcServerCertPath = [
   config.get("CERTS_PATH"),
