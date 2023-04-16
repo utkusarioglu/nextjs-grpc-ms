@@ -80,12 +80,13 @@ export function main() {
 
   const requestListener: http.RequestListener = function (_req, res) {
     res.writeHead(200);
-
+    console.log("Received http request")
     const rows: any[] = []
     decadeStats(["USA", "TUR"], {
       write: (row) => rows.push(row),
       end: () => res.end(JSON.stringify(rows, null, 2))
     });
+    console.log("Sent http request", rows);
   };
 
   const httpServer = http.createServer(requestListener);

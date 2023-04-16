@@ -89,6 +89,7 @@ env:
   GRPC_LOG_VERBOSITY: DEBUG
   GRPC_TRACE: all
   GRPC_CHECK_CLIENT_CERT: true
+  ENABLE_INSTRUMENTATION: "FALSE"
 
 cloudProvider:
   isLocal: false
