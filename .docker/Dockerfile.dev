@@ -32,7 +32,7 @@ COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/yarn.lock yarn.loc
 
 WORKDIR  /utkusarioglu-com/projects/nextjs-grpc/proto
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/proto/src src
-RUN rm src/defunct
+RUN rm -rf src/defunct
 
 WORKDIR  /utkusarioglu-com/projects/nextjs-grpc/ms
 RUN yarn --frozen-lockfile --prod
