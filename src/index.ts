@@ -42,7 +42,8 @@ export function main() {
       span?.setAttribute("some-attribute", "set some attribute");
       try {
         // decadeStats(["USA", "TUR"], call);
-        decadeStats(call.request, call);
+        console.log({callRequest: call.request})
+        decadeStats(call.request.codes, call);
       } catch (e: any) {
         span?.recordException(e);
         span?.setStatus({ code: api.SpanStatusCode.ERROR });

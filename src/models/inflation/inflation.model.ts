@@ -40,8 +40,7 @@ export const decadeStats: DecadeStats = (countryCodes, stream) =>
       stream.end()
       // Promise.resolve(MOCK_VALUE)
     })()
-    : (() => {
-      stream = knex
+    : knex
         .select({
           countryName: "country_name",
           countryCode: "country_code",
@@ -59,7 +58,6 @@ export const decadeStats: DecadeStats = (countryCodes, stream) =>
         .from("decade_stats")
         .whereIn("country_code", countryCodes)
         .stream();
-    })()
     // : knex
     //   .select({
     //     countryName: "country_name",
