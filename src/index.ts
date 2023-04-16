@@ -11,6 +11,14 @@ const readFile = util.promisify(fs.readFile);
 
 const INSECURE = true
 
+const url = [config.get("HOST"), config.get("PORT")].join(":");
+const grpcServerCertPath = [
+  config.get("CERTS_PATH"),
+  config.get("GRPC_SERVER_CERT_SUBPATH"),
+].join("/");
+const crtPromise = readFile(`${grpcServerCertPath}/tls.crt`);
+const keyPromise = readFile(`${grpcServerCertPath}/tls.key`);
+
 export function main() {
   const greetingProtoDef = protoLoader.loadSync(PROTO_PATH, {
     keepCase: true,
@@ -45,14 +53,6 @@ export function main() {
       }
     },
   });
-
-  const url = [config.get("HOST"), config.get("PORT")].join(":");
-  const grpcServerCertPath = [
-    config.get("CERTS_PATH"),
-    config.get("GRPC_SERVER_CERT_SUBPATH"),
-  ].join("/");
-  const crtPromise = readFile(`${grpcServerCertPath}/tls.crt`);
-  const keyPromise = readFile(`${grpcServerCertPath}/tls.key`);
 
   Promise.all([crtPromise, keyPromise]).then(([crt, key]) => {
     
