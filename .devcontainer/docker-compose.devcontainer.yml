@@ -3,6 +3,8 @@ services:
   ms:
     extra_hosts:
       local.targets.infra.nextjs-grpc.projects.utkusarioglu.com: host-gateway
+    environment:
+      GH_TOKEN: ${GH_TOKEN}
     volumes:
       - vscode-extensions:/root/.vscode-server/extensions
       - vscode-extensions-insiders:/root/.vscode-server-insiders/extensions
@@ -19,8 +21,8 @@ services:
 
     # networks:
     #   - gefyra
-      # - k3d-nextjs-grpc-k3d-dev-local
-      # - nextjs_grpc
+    # - k3d-nextjs-grpc-k3d-dev-local
+    # - nextjs_grpc
     # cap_add:
     #   - "NET_ADMIN"
     # devices:
@@ -29,11 +31,10 @@ services:
 volumes:
   vscode-extensions:
   vscode-extensions-insiders:
-
 # networks:
 #   gefyra:
 #     external: true
-  # k3d-nextjs-grpc-k3d-dev-local:
-  #   external: true
-  # nextjs_grpc:
-  #   external: true
+# k3d-nextjs-grpc-k3d-dev-local:
+#   external: true
+# nextjs_grpc:
+#   external: true

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export NODE_EXTRA_CA_CERTS=$CERTS_PATH/grpc-server/tls.crt
-yarn ts-node-dev src/telemetry.ts
+export NODE_EXTRA_CA_CERTS="$CERTS_ABSPATH/grpc-server/tls.crt"
+NODE_ENV=development yarn ts-node-dev src/telemetry.ts

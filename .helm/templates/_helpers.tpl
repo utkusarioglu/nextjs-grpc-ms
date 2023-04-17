@@ -75,12 +75,12 @@ service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
 Produce repo path from project path and repo subpath
 */}}
 {{- define "ms.repoPath" -}}
-{{- printf "%s/%s" .Values.env.PROJECT_ROOT_PATH .Values.env.REPO_SUBPATH -}}
+{{- printf "%s/%s" .Values.env.PROJECT_ROOT_ABSPATH .Values.env.REPO_SUBPATH -}}
 {{- end -}}
 
 {{/* 
 Produce absolute path for a single cert
 */}}
 {{- define "ms.singleCertPath" -}}
-{{- printf "%s/%s" .global.Values.env.CERTS_PATH .subpath -}}
+{{- printf "%s/%s" .global.Values.env.CERTS_ABSPATH .subpath -}}
 {{- end -}}

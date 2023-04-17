@@ -2,9 +2,10 @@ import { DecadeStats } from "./inflation.model.types";
 import { knex } from "../../services/postgres-storage/postgres-storage.service";
 
 // @ts-expect-error
-const mock = process.env.NODE_ENV === "development"
+const mockGrpcValues = process.env.NODE_ENV === "development";
 
-const MOCK_VALUE = [{
+const MOCK_VALUES = [
+  {
     countryName: "country_name",
     countryCode: "country_code",
     decade: 1,
@@ -16,7 +17,8 @@ const MOCK_VALUE = [{
     range: 1,
     stdDev: 1,
     variance: 1,
-  }, {
+  },
+  {
     countryName: "country_name",
     countryCode: "country_code",
     decade: 2,
@@ -28,19 +30,23 @@ const MOCK_VALUE = [{
     range: 2,
     stdDev: 2,
     variance: 2,
-  }]
+  },
+];
 
 export const decadeStats: DecadeStats = (countryCodes, stream) =>
-  mock
+  mockGrpcValues
     ? (() => {
-        console.log("reached mock db", countryCodes)
-        MOCK_VALUE.forEach((row) => {
-          stream.write(row);
-        })
-        stream.end()
+        stream.write(Buffer.from("["));
+        MOCK_VALUES.forEach((item, i, a) => {
+          stream.write(Buffer.from(JSON.stringify(item)));
+          if (a.length > i + 1) {
+            stream.write(", ");
+          }
+        });
+        stream.write(Buffer.from("]"));
+        stream.end();
       })()
-    : (() => {
-      const knexStream = knex
+    : knex
         .select({
           countryName: "country_name",
           countryCode: "country_code",
@@ -57,25 +63,5 @@ export const decadeStats: DecadeStats = (countryCodes, stream) =>
         .withSchema("inflation")
         .from("decade_stats")
         .whereIn("country_code", countryCodes)
-        .stream();
-      console.log({ knexStream });
-      knexStream.pipe(stream);
-      return knexStream;
-    })()
-    // : knex
-    //   .select({
-    //     countryName: "country_name",
-    //     countryCode: "country_code",
-    //     decade: "decade",
-    //     count: "count",
-    //     average: "average",
-    //     max: "max",
-    //     min: "min",
-    //     median: "median",
-    //     range: "range",
-    //     stdDev: "stddev",
-    //     variance: "variance",
-    //   })
-    //   .withSchema("inflation")
-    //   .from("decade_stats")
-    //   .whereIn("country_code", countryCodes);
+        .stream()
+        .pipe(stream);

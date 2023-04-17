@@ -78,19 +78,30 @@ affinity: {}
 
 env:
   RUN_MODE: development
-  HOST: 0.0.0.0
-  PORT: 50051
+
+  GRPC_SERVER_HOST: 0.0.0.0
+  GRPC_SERVER_PORT: 50051
+  GRPC_SERVER_CERT_SUBPATH: grpc-server
+  GRPC_SERVER_TLS_DISABLE: false
+  GRPC_SERVER_LOG_VERBOSITY: WARN
+  GRPC_SERVER_TRACE: all
+  GRPC_SERVER_CHECK_CLIENT_CERT: true
+
   OTEL_TRACE_HOST: otel-trace-collector.observability
   OTEL_TRACE_PORT: 4317
-  REPO_SUBPATH: ms
-  PROJECT_ROOT_PATH: /utkusarioglu-com/projects/nextjs-grpc
-  CERTS_PATH: /.certs
-  GRPC_SERVER_CERT_SUBPATH: grpc-server
-  GRPC_LOG_VERBOSITY: DEBUG
-  GRPC_TRACE: all
-  GRPC_CHECK_CLIENT_CERT: true
-  ENABLE_INSTRUMENTATION: false
-  INSECURE_GRPC: false
+  OTEL_ENABLE_INSTRUMENTATION: false
+  OTEL_METRICS_PORT: 9464
+  OTEL_SERVICE_NAME: nextjs-grpc-ms
+  OTEL_SERVICE_NAMESPACE: ms
+
+  PROJECT_ROOT_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc
+
+  REPO_MS_SUBPATH: ms
+  REPO_PROTOS_SUBPATH: proto
+
+  CERTS_ABSPATH: /.certs
+
+  POSTGRES_STORAGE_CREDS_ABSPATH: '.secrets/ms.yaml'
 
 cloudProvider:
   isLocal: false

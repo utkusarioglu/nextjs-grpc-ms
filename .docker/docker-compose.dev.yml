@@ -15,7 +15,7 @@ services:
     #   - ../../certificates/files/intermediate/private/intermediate.key:/utkusarioglu-com/projects/nextjs-grpc/ms/.certs/grpc-server/tls.key
     image: utkusarioglu/node-devcontainer:19-slim.0.5
     environment:
-      CERTS_PATH: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs
+      CERTS_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs
     volumes:
       - type: bind
         source: ..

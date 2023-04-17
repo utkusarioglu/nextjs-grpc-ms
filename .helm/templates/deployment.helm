@@ -71,7 +71,7 @@ spec:
             {{ with .Values.env }}
             {{- if eq .RUN_MODE "development" -}}
             - name: source-code
-              mountPath: {{ .PROJECT_ROOT_PATH }}
+              mountPath: {{ .PROJECT_ROOT_ABSPATH }}
             {{- end }}
             - name: {{ $.Values.certSecretNames.msGrpcServer | quote }}
               mountPath: {{

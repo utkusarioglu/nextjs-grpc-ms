@@ -14,14 +14,16 @@ import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
 import { MeterProvider } from "@opentelemetry/sdk-metrics-base";
 import { HostMetrics } from "@opentelemetry/host-metrics";
 
-const prometheusPort = 9464;
-const serviceName = "nextjs-grpc-ms";
-const serviceNamespace = "ms";
+const prometheusPort = config.get("OTEL_METRICS_PORT");
+const serviceName = config.get("OTEL_SERVICE_NAME");
+// const serviceNamespace = "ms";
+const serviceNamespace = config.get("OTEL_SERVICE_NAMESPACE");
 // const traceUrl = `grpc://${process.env.OTEL_TRACE_HOST}:${process.env.OTEL_TRACE_PORT}`;
-const traceUrl = `grpc://${config.get("OTEL_TRACE_HOST")}:${config.get(
-  "OTEL_TRACE_PORT"
-)}`;
-console.log(`Trace url: ${traceUrl}`);
+// const traceUrl = `grpc://${config.get("OTEL_TRACE_HOST")}:${config.get(
+//   "OTEL_TRACE_PORT"
+// )}`;
+// const traceUrl = config.get("OTEL_TRACE_URL");
+// console.log(`Trace url: ${traceUrl}`);
 
 const instrumentations = [getNodeAutoInstrumentations()];
 
@@ -33,7 +35,7 @@ const metadata = new Metadata();
 //   metadata,
 // });
 const traceExporter = new OTLPTraceExporter({
-  url: traceUrl,
+  url: config.get("OTEL_TRACE_URL"),
   credentials: credentials.createInsecure(),
   metadata,
 });

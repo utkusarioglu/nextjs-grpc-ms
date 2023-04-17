@@ -1,6 +1,7 @@
 node_modules
 *.log
 *.env
+.env.*
 /*tsbuildinfo*
 .next
 .certs

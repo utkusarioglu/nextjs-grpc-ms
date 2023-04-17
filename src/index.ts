@@ -1,101 +1,29 @@
-import { api } from "@opentelemetry/sdk-node";
-import config from "./config";
 import http from "http";
-const PROTO_PATH = "../proto/src/inflation/decade-stats.proto";
-import * as grpc from "@grpc/grpc-js";
-import * as protoLoader from "@grpc/proto-loader";
-import fs from "fs";
-import util from "util";
+import grpcService from "./services/grpc/grpc.class";
 import { decadeStats } from "./models/inflation/inflation.model";
-const readFile = util.promisify(fs.readFile);
-
-// const insecureGrpc = ["1", "TRUE", "YES"].includes(
-//   (process.env["INSECURE_GRPC"] || "false").toUpperCase()
-// );
-const insecureGrpc = config.get("INSECURE_GRPC");
-
-if (insecureGrpc) {
-  console.log({ msg: "starting insecure grpc", insecureGrpc });
-} else {
-  console.log({ msg: "grpc is secure", insecureGrpc });
-}
-
-const url = [config.get("HOST"), config.get("PORT")].join(":");
-const grpcServerCertPath = [
-  config.get("CERTS_PATH"),
-  config.get("GRPC_SERVER_CERT_SUBPATH"),
-].join("/");
-const crtPromise = readFile(`${grpcServerCertPath}/tls.crt`);
-const keyPromise = readFile(`${grpcServerCertPath}/tls.key`);
 
 export function main() {
-  const greetingProtoDef = protoLoader.loadSync(PROTO_PATH, {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
-  });
+  grpcService.addServices().startServer();
 
-  const inflationProto = grpc.loadPackageDefinition(greetingProtoDef);
-  const server = new grpc.Server();
-
-  // @ts-ignore
-  server.addService(inflationProto.ms.nextjs_grpc.Inflation.service, {
-    decadeStats: async (call: any) => {
-      // console.log({call, callback})
-      const span = api.trace.getSpan(api.context.active());
-      span?.addEvent("Retrieving Inflation decade stats");
-      span?.setAttribute("some-attribute", "set some attribute");
-      try {
-        // decadeStats(["USA", "TUR"], call);
-        console.log({callRequest: call.request})
-        decadeStats(call.request.codes, call);
-      } catch (e: any) {
-        span?.recordException(e);
-        span?.setStatus({ code: api.SpanStatusCode.ERROR });
-        console.log(e);
-      } finally {
-        // call.end();
-        // TODO find out if it's safe to enable these
-        // span.addEvent("Finished Sending Greeting");
-        // span.end();
-      }
-    },
-  });
-
-  Promise.all([crtPromise, keyPromise]).then(([crt, key]) => {
-    const credentials = insecureGrpc
-      ? grpc.ServerCredentials.createInsecure()
-      : grpc.ServerCredentials.createSsl(
-        crt,
-        [
-          {
-            private_key: key,
-            cert_chain: crt,
-          },
-        ],
-        config.get("GRPC_CHECK_CLIENT_CERT")
-      );
-    server.bindAsync(url, credentials, (error, _port) => {
-      if (error) {
-        console.log(`Error occurred: `, error);
-        return;
-      }
-      console.log(`Server started at ${url}`);
-      server.start();
-    });
-  });
-
-  const requestListener: http.RequestListener = function (_req, res) {
+  const requestListener: http.RequestListener = async function (req, res) {
     res.writeHead(200);
-    console.log("Received http request")
-    const rows: any[] = []
-    decadeStats(["USA", "TUR"], {
-      write: (row) => rows.push(row),
-      end: () => res.end(JSON.stringify(rows, null, 2))
-    });
-    console.log("Sent http request", rows);
+    const url = new URL(req.url || "", `http://${req.headers.host}`);
+    switch (url.pathname) {
+      case "/decade-stats":
+        const codes = url.searchParams.get("codes");
+        if (!codes) {
+          res.write(JSON.stringify({ error: "Missing codes" }));
+          return;
+        }
+        const codesArray = codes.split(",");
+        console.log("Received http request", codesArray);
+        decadeStats(codesArray, res);
+        return;
+      default:
+        res.write(JSON.stringify({ message: "Not implemented" }));
+        res.end();
+        return;
+    }
   };
 
   const httpServer = http.createServer(requestListener);
