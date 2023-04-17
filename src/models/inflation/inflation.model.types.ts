@@ -2,6 +2,7 @@
 
 import { Writable } from "stream";
 
+// @ts-expect-error
 interface DecadeStatsRow {
   countryName: string;
   countryCode: string;

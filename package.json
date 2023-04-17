@@ -11,7 +11,8 @@
     "dev:no-telemetry": "scripts/dev-no-telemetry.sh",
     "start": "scripts/start.sh",
     "debug": "scripts/debug.sh",
-    "build": "yarn tsc"
+    "remove-build": "rm -rf $(jq -r '.compilerOptions.outDir' tsconfig.json)",
+    "build": "yarn remove-build && yarn tsc"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.8.14",
