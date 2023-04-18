@@ -97,11 +97,13 @@ env:
   PROJECT_ROOT_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc
 
   REPO_MS_SUBPATH: ms
-  REPO_PROTOS_SUBPATH: proto
+  REPO_PROTOS_SUBPATH: proto/src
 
   CERTS_ABSPATH: /.certs
 
   POSTGRES_STORAGE_CREDS_ABSPATH: '.secrets/ms.yaml'
+  POSTGRES_STORAGE_HOST: postgres-storage.ms
+  POSTGRES_STORAGE_PORT: 5432
 
 cloudProvider:
   isLocal: false

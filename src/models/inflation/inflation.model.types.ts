@@ -2,8 +2,7 @@
 
 import { Writable } from "stream";
 
-// @ts-expect-error
-interface DecadeStatsRow {
+export interface DecadeStatsRow {
   countryName: string;
   countryCode: string;
   decade: number; // uint

@@ -3,6 +3,7 @@ services:
   ms:
     extra_hosts:
       local.targets.infra.nextjs-grpc.projects.utkusarioglu.com: host-gateway
+      postgres-storage.ms.nextjs-grpc.utkusarioglu.com: host-gateway
     environment:
       GH_TOKEN: ${GH_TOKEN}
     volumes:

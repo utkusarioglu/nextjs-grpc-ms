@@ -20,6 +20,7 @@ nconf
           break;
         case "GRPC_SERVER_PORT":
         case "OTEL_TRACE_PORT":
+        case "POSTGRES_STORAGE_PORT":
           prop["value"] = parseInt(prop["value"]);
           break;
       }
@@ -30,6 +31,8 @@ nconf
     "GRPC_SERVER_HOST",
     "GRPC_SERVER_PORT",
     "POSTGRES_STORAGE_CREDS_ABSPATH",
+    "POSTGRES_STORAGE_HOST",
+    "POSTGRES_STORAGE_PORT",
     "CERTS_ABSPATH",
     "GRPC_SERVER_CERT_SUBPATH",
   ]);
