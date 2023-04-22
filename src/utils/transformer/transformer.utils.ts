@@ -1,8 +1,9 @@
 import { Transform, TransformCallback } from "stream";
+import log from "_services/log/log.service";
 
-class StringTransformer extends Transform {
+export class StringTransformer extends Transform {
   constructor(...params: ConstructorParameters<typeof Transform>) {
-    super(Object.assign({}, { writableObjectMode: true }, ...params));
+    super({ ...params, objectMode: true });
   }
 
   public override _transform(
@@ -16,9 +17,9 @@ class StringTransformer extends Transform {
   }
 }
 
-export const stringTransformer = new StringTransformer();
+// export const stringTransformer = new StringTransformer();
 
-class JsonArrayTransformer extends Transform {
+export class JsonArrayTransformer extends Transform {
   private itemCounter = 0;
 
   constructor(...params: ConstructorParameters<typeof Transform>) {
@@ -49,4 +50,29 @@ class JsonArrayTransformer extends Transform {
   }
 }
 
-export const jsonArrayTransformer = new JsonArrayTransformer();
+// export const jsonArrayTransformer = new JsonArrayTransformer();
+
+export class NeutralTransformer extends Transform {
+  constructor(...params: ConstructorParameters<typeof Transform>) {
+    super({ ...params, objectMode: true });
+  }
+
+  public override _transform(
+    chunk: any,
+    encoding: BufferEncoding,
+    callback: TransformCallback
+  ): void {
+    log.debug("Received stream", { chunk, encoding });
+    this.push(chunk);
+    callback();
+  }
+
+  public override _final(
+    callback: (error?: Error | null | undefined) => void
+  ): void {
+    log.debug("Final called");
+    callback();
+  }
+}
+
+// export const neutralTransformer = new NeutralTransformer();

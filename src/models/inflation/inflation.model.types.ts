@@ -1,4 +1,4 @@
-import { type Transform } from "stream";
+import { type Readable } from "stream";
 
 export interface DecadeStatsRow {
   countryName: string;
@@ -18,6 +18,6 @@ interface MethodParams {
   codes: string[];
 }
 
-type DecadeStatsParams = [MethodParams, Transform];
+type DecadeStatsParams = [MethodParams];
 
-export type DecadeStats = (...params: DecadeStatsParams) => Promise<number>;
+export type DecadeStats = (...params: DecadeStatsParams) => Readable;

@@ -2,9 +2,11 @@ import * as grpc from "@grpc/grpc-js";
 import config from "_config";
 import { readFileSync } from "fs";
 import { api } from "@opentelemetry/sdk-node";
-import { decadeStats } from "_models/inflation/inflation.model";
+import { InflationModel } from "_models/inflation/inflation.model";
 import protos from "_services/protos/protos.service";
 import log from "_services/log/log.service";
+import { pipeline } from "node:stream";
+// import { NeutralTransformer } from "_utils/transformer/transformer.utils";
 
 type PackageDefs = Record<string, grpc.GrpcObject>;
 interface TlsProps {
@@ -39,43 +41,35 @@ class GrpcService {
   }
 
   public addServices(): this {
-    // const inflationService2 = this.packageDefs["inflation"]!["service"]!;
     const inflationService = this.getService("inflation");
     this.server.addService(inflationService, {
       // TODO you have an `any` type here
       decadeStats: async (call: any) => {
-        // console.log({call, callback})
         const span = api.trace.getSpan(api.context.active());
         span?.addEvent("Retrieving Inflation decade stats");
         span?.setAttribute("some-attribute", "set some attribute");
         try {
-          // decadeStats(["USA", "TUR"], call);
-          log.debug("grpc call", { callRequest: call.request });
+          // log.debug("grpc call", { callRequest: call.request });
 
-          await decadeStats(call.request, call).then((writeCounter) => {
-            log.debug("DecadeStats finished", {
-              writeCounter,
-              closed: call.closed,
-            });
+          // const neutralTransformer = new NeutralTransformer();
+          const source = InflationModel.decadeStats(call.request);
+          // source.pipe(neutralTransformer).pipe(call);
+
+          pipeline(source, call, (e: unknown) => {
+            if (e) {
+              log.error("Something went wrong in decadeStats pipeline", {
+                error: e,
+              });
+            }
+            log.debug("Grpc call finished");
+            //   // call.end("fail");
           });
-
-          // pipeline(
-          //   // bufferToStringTransformer,
-          //   // stringJsonToObjectTransformer,
-          //   call,
-          //   (e: unknown) => {
-          //     if (e) {
-          //       log.error("Something went wrong", { error: e });
-          //     }
-          //     log.debug("Grpc call finished");
-          //   }
-          // );
         } catch (e: any) {
-          span?.recordException(e);
-          span?.setStatus({ code: api.SpanStatusCode.ERROR });
-          log.error("Error during grpc retrieval", { error: e });
+          // span?.recordException(e);
+          // span?.setStatus({ code: api.SpanStatusCode.ERROR });
+          // log.error("Error during grpc retrieval", { error: e });
         } finally {
-          call.end("error");
+          // call.end("error");
           // TODO find out if it's safe to enable these
           // span.addEvent("Finished Sending Greeting");
           // span.end();

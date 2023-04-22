@@ -1,10 +1,10 @@
 import http from "http";
-import { decadeStats } from "_models/inflation/inflation.model";
+import { InflationModel } from "_models/inflation/inflation.model";
 import { pipeline } from "stream";
 import log from "_services/log/log.service";
 import {
-  jsonArrayTransformer,
-  stringTransformer,
+  JsonArrayTransformer,
+  StringTransformer,
 } from "_utils/transformer/transformer.utils";
 
 // On second call, the http callback doesn't return anything
@@ -24,21 +24,20 @@ class HttpService {
           }
           const codesArray = codes.split(",");
           log.debug("Http GET /decade-stats", { codesArray });
-          decadeStats({ codes: codesArray }, stringTransformer)
-            .then((writeCounter) => {
-              log.debug("DecadeStats finished", {
-                writeCounter,
-                itemCount: jsonArrayTransformer.getItemCount(),
-              });
-            })
-            .catch((e) => {
-              log.debug("Catching decade stats", { error: e });
-            });
-          pipeline(stringTransformer, jsonArrayTransformer, res, (e) => {
-            if (e) {
-              log.error("Something broken in pipeline", { error: e });
+          const stringTransformer = new StringTransformer();
+          const jsonArrayTransformer = new JsonArrayTransformer();
+          const source = InflationModel.decadeStats({ codes: codesArray });
+          pipeline(
+            source,
+            stringTransformer,
+            jsonArrayTransformer,
+            res,
+            (e) => {
+              if (e) {
+                log.error("Something broken in pipeline", { error: e });
+              }
             }
-          });
+          );
           return;
         default:
           res.write(JSON.stringify({ message: "Not implemented" }));
