@@ -105,6 +105,10 @@ env:
   POSTGRES_STORAGE_HOST: postgres-storage.ms
   POSTGRES_STORAGE_PORT: 5432
 
+  LOG_FORMAT: json
+  LOG_LEVEL: warning
+  LOG_TIME_FORMAT: 'YYYY-MM-DD HH:mm:ss'
+
 cloudProvider:
   isLocal: false
   isAws: false

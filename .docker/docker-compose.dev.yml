@@ -16,6 +16,7 @@ services:
     image: utkusarioglu/node-devcontainer:19-slim.0.5
     environment:
       CERTS_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs
+      GRPC_SERVER_CERT_SUBPATH: grpc-server
     volumes:
       - type: bind
         source: ..

@@ -1,27 +1,60 @@
 require("dotenv").config();
+import { strict as assert } from "assert";
 import nconf from "nconf";
 import yaml from "yaml";
 import {
   booleanAssumeTrue,
   booleanAssumeFalse,
   printConfig,
-} from "./utils/config/config.utils";
+} from "_utils/config/config.utils";
+import {
+  LOG_LEGAL_LEVEL_KEYS,
+  LOG_LEGAL_FORMATS,
+} from "_services/log/log.constants";
 
 nconf
   .env({
     transform: (prop: Record<string, any>) => {
+      let transformed: any;
       switch (prop["key"]) {
         case "GRPC_SERVER_CHECK_CLIENT_CERT":
-        case "OTEL_ENABLE_INSTRUMENTATION":
+        case "FEATURE_INSTRUMENTATION":
+        case "FEATURE_GRPC_SERVER":
+        case "FEATURE_HTTP_SERVER":
           prop["value"] = booleanAssumeTrue(prop["value"]);
           break;
         case "GRPC_SERVER_TLS_DISABLE":
+        case "POSTGRES_STORAGE_MOCK_CONNECTION":
+        case "OTEL_TRACE_TO_CONSOLE":
           prop["value"] = booleanAssumeFalse(prop["value"]);
           break;
         case "GRPC_SERVER_PORT":
         case "OTEL_TRACE_PORT":
         case "POSTGRES_STORAGE_PORT":
+        case "POSTGRES_STORAGE_QUERY_TIMEOUT":
           prop["value"] = parseInt(prop["value"]);
+          break;
+        case "LOG_FORMAT":
+          transformed = prop["value"].toUpperCase();
+          assert(
+            LOG_LEGAL_FORMATS.includes(transformed),
+            `${prop["value"]} is not a legal LOG_FORMAT value`
+          );
+          prop["value"] = transformed;
+          break;
+        case "LOG_LEVEL":
+          transformed = prop["value"].toLowerCase();
+          assert(
+            LOG_LEGAL_LEVEL_KEYS.includes(transformed),
+            `${prop["value"]} is not among accepted log levels`
+          );
+          prop["value"] = transformed;
+          break;
+        case "LOG_CONFIG_PRINT_LEVELS":
+          prop["value"] = prop["value"]
+            .toLowerCase()
+            .split(",")
+            .map((s: string) => s.trim());
           break;
       }
       return prop;
@@ -46,11 +79,6 @@ nconf
     },
   })
   .required(["POSTGRES_STORAGE_USERNAME", "POSTGRES_STORAGE_PASSWORD"]);
-
-nconf.defaults({
-  GRPC_CHECK_CLIENT_CERT: true,
-  GRPC_TLS_DISABLE: false,
-});
 
 nconf.set(
   "GRPC_SERVER_URL",
@@ -89,10 +117,33 @@ nconf.set(
   ].join("")
 );
 
-printConfig(nconf.get(), {
-  redactions: {
-    includes: ["PASSWORD"],
-  },
+nconf.defaults({
+  FEATURE_INSTRUMENTATION: true,
+  FEATURE_GRPC_SERVER: true,
+  FEATURE_HTTP_SERVER: true,
+
+  OTEL_TRACE_TO_CONSOLE: false,
+
+  GRPC_CHECK_CLIENT_CERT: true,
+  GRPC_TLS_DISABLE: false,
+
+  POSTGRES_STORAGE_QUERY_TIMEOUT: 5000,
+  POSTGRES_STORAGE_MOCK_CONNECTION: false,
+
+  LOG_FORMAT: "JSON",
+  LOG_LEVEL: "warning",
+  LOG_TIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
+  LOG_CONFIG_PRINT_LEVELS: ["info", "debug"],
 });
+
+const logLevel = nconf.get("LOG_LEVEL");
+const logConfigPrintLevels = nconf.get("LOG_CONFIG_PRINT_LEVELS");
+if (logConfigPrintLevels.includes(logLevel)) {
+  printConfig(nconf.get(), {
+    redactions: {
+      includes: ["PASSWORD"],
+    },
+  });
+}
 
 export default nconf;

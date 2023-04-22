@@ -3,94 +3,66 @@ import { NodeSDK } from "@opentelemetry/sdk-node";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { diag, DiagConsoleLogger, DiagLogLevel } from "@opentelemetry/api";
 import { PrometheusExporter } from "@opentelemetry/exporter-prometheus";
-// const {
-//   BasicTracerProvider,
-//   SimpleSpanProcessor,
-// } = require("@opentelemetry/sdk-trace-base");
 import { Metadata, credentials } from "@grpc/grpc-js";
 import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
 import { Resource } from "@opentelemetry/resources";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
-import { MeterProvider } from "@opentelemetry/sdk-metrics-base";
-import { HostMetrics } from "@opentelemetry/host-metrics";
+import {
+  ConsoleSpanExporter,
+  InMemorySpanExporter,
+  SimpleSpanProcessor,
+} from "@opentelemetry/sdk-trace-base";
+
+const diagLogger = new DiagConsoleLogger();
+
+const instrumentations = [
+  getNodeAutoInstrumentations({
+    "@opentelemetry/instrumentation-fs": {
+      requireParentSpan: true,
+    },
+    "@opentelemetry/instrumentation-winston": {},
+  }),
+];
+
+const traceExporter = config.get("OTEL_TRACE_TO_CONSOLE")
+  ? () => new ConsoleSpanExporter()
+  : () =>
+      new OTLPTraceExporter({
+        url: config.get("OTEL_TRACE_URL"),
+        credentials: credentials.createInsecure(),
+        metadata: new Metadata(),
+      });
+diag.setLogger(diagLogger, DiagLogLevel.INFO);
 
 const prometheusPort = config.get("OTEL_METRICS_PORT");
-const serviceName = config.get("OTEL_SERVICE_NAME");
-// const serviceNamespace = "ms";
-const serviceNamespace = config.get("OTEL_SERVICE_NAMESPACE");
-// const traceUrl = `grpc://${process.env.OTEL_TRACE_HOST}:${process.env.OTEL_TRACE_PORT}`;
-// const traceUrl = `grpc://${config.get("OTEL_TRACE_HOST")}:${config.get(
-//   "OTEL_TRACE_PORT"
-// )}`;
-// const traceUrl = config.get("OTEL_TRACE_URL");
-// console.log(`Trace url: ${traceUrl}`);
-
-const instrumentations = [getNodeAutoInstrumentations()];
-
-const metadata = new Metadata();
-// const traceProvider = new BasicTracerProvider();
-// const traceExporter = new OTLPTraceExporter({
-//   url: traceUrl,
-//   credentials: credentials.createInsecure(),
-//   metadata,
-// });
-const traceExporter = new OTLPTraceExporter({
-  url: config.get("OTEL_TRACE_URL"),
-  credentials: credentials.createInsecure(),
-  metadata,
-});
-
-// traceProvider.addSpanProcessor(new SimpleSpanProcessor(traceExporter));
-// traceProvider.register();
-
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
-
-const metricExporter = new PrometheusExporter(
-  // @ts-ignore
-  { port: prometheusPort, startServer: true },
-  () => console.log(`metrics @ ms.ms:${prometheusPort}/metrics`)
+const metricReader = new PrometheusExporter({ port: prometheusPort }, () =>
+  diagLogger.info(`metrics @ ms.ms:${prometheusPort}/metrics`)
 );
-const meterProvider = new MeterProvider({
-  // @ts-ignore
-  exporter: metricExporter,
-  interval: 1000,
-});
-// this is probably temporary, without this prometheus metrics don't work
-// and this command is not given in any of the documentation.
-// meterProvider.addMetricReader(metricExporter);
 
-// @ts-ignore
-const hostMetrics = new HostMetrics({ meterProvider, name: serviceName });
-hostMetrics.start();
-
+const serviceName = config.get("OTEL_SERVICE_NAME");
+const serviceNamespace = config.get("OTEL_SERVICE_NAMESPACE");
 const sdk = new NodeSDK({
+  serviceName,
+  autoDetectResources: true,
   resource: new Resource({
     [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
     [SemanticResourceAttributes.SERVICE_NAMESPACE]: serviceNamespace,
   }),
-  // @ts-ignore
-  metricExporter,
-  traceExporter,
+  metricReader,
+  traceExporter: traceExporter(),
   instrumentations,
 });
 
 sdk.start();
 const { main } = require("./index");
 main();
-//   .then(() => {
-//   console.log("sdk.start().then() running");
-//   const meter = meterProvider.getMeter(serviceName);
-//   const counter = meter.createCounter("some_counter", {
-//     description: "some test value",
-//   });
-//   counter.add(3);
-//   main();
-// });
 
 process.on("SIGTERM", () => {
   sdk
     .shutdown()
-    .then(() => console.log("Tracing terminated"))
-    .catch((error: any) => console.log("Error terminating tracing", error))
+    .then(() => diagLogger.info("Telemetry terminated"))
+    .catch((error: any) =>
+      diagLogger.error("Error during telemetry termination", { error })
+    )
     .finally(() => process.exit(0));
 });

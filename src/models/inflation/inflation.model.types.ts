@@ -1,12 +1,10 @@
-// type DecadeStatsReturn = DecadeStatsRow[]
-
-import { Writable } from "stream";
+import { type Transform } from "stream";
 
 export interface DecadeStatsRow {
   countryName: string;
   countryCode: string;
   decade: number; // uint
-  count: number; // unint
+  count: number; // uint
   average: number; // float
   max: number; // float
   min: number; // float
@@ -16,6 +14,10 @@ export interface DecadeStatsRow {
   variance: number; // float
 }
 
-type DecadeStatsParams = [string[], Writable];
+interface MethodParams {
+  codes: string[];
+}
 
-export type DecadeStats = (...params: DecadeStatsParams) => void;
+type DecadeStatsParams = [MethodParams, Transform];
+
+export type DecadeStats = (...params: DecadeStatsParams) => Promise<number>;

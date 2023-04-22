@@ -1,9 +1,15 @@
 import * as grpc from "@grpc/grpc-js";
-import config from "../../config";
+import config from "_config";
 import { readFileSync } from "fs";
 import { api } from "@opentelemetry/sdk-node";
-import { decadeStats } from "../../models/inflation/inflation.model";
-import protoService from "../protos/proto.service";
+import { decadeStats } from "_models/inflation/inflation.model";
+import protos from "_services/protos/protos.service";
+import log from "_services/log/log.service";
+import { pipeline } from "stream";
+import {
+  bufferToStringTransformer,
+  stringJsonToObjectTransformer,
+} from "_utils/transformer/transformer.utils";
 
 type PackageDefs = Record<string, grpc.GrpcObject>;
 interface TlsProps {
@@ -22,11 +28,26 @@ class GrpcService {
     this.server = new grpc.Server();
   }
 
-  public addServices(): this {
-    // inflationProto.ms.nextjs_grpc.Inflation.service
-    const inflationService = this.packageDefs["inflation"]!["service"]!;
+  private getService(
+    serviceName: keyof typeof this.packageDefs
+  ): grpc.ServiceDefinition {
+    const grpcPackage = this.packageDefs[serviceName];
+    if (!grpcPackage) {
+      throw new Error("No such package");
+    }
+    const grpcService = grpcPackage["service"];
+    if (!grpcService) {
+      throw new Error("No Service defined for given package");
+    }
     // @ts-expect-error
+    return grpcService as grpc.ServiceDefinition;
+  }
+
+  public addServices(): this {
+    // const inflationService2 = this.packageDefs["inflation"]!["service"]!;
+    const inflationService = this.getService("inflation");
     this.server.addService(inflationService, {
+      // TODO you have an `any` type here
       decadeStats: async (call: any) => {
         // console.log({call, callback})
         const span = api.trace.getSpan(api.context.active());
@@ -34,14 +55,32 @@ class GrpcService {
         span?.setAttribute("some-attribute", "set some attribute");
         try {
           // decadeStats(["USA", "TUR"], call);
-          console.log({ callRequest: call.request });
-          decadeStats(call.request.codes, call);
+          log.debug("grpc call", { callRequest: call.request });
+
+          await decadeStats(call.request, call).then((writeCounter) => {
+            log.debug("DecadeStats finished", {
+              writeCounter,
+              closed: call.closed,
+            });
+          });
+
+          // pipeline(
+          //   // bufferToStringTransformer,
+          //   // stringJsonToObjectTransformer,
+          //   call,
+          //   (e: unknown) => {
+          //     if (e) {
+          //       log.error("Something went wrong", { error: e });
+          //     }
+          //     log.debug("Grpc call finished");
+          //   }
+          // );
         } catch (e: any) {
           span?.recordException(e);
           span?.setStatus({ code: api.SpanStatusCode.ERROR });
-          console.log(e);
+          log.error("Error during grpc retrieval", { error: e });
         } finally {
-          // call.end();
+          call.end("error");
           // TODO find out if it's safe to enable these
           // span.addEvent("Finished Sending Greeting");
           // span.end();
@@ -52,6 +91,7 @@ class GrpcService {
   }
 
   public startServer(): void {
+    const serverUrl = config.get("GRPC_SERVER_URL");
     const credentials = config.get("GRPC_SERVER_TLS_DISABLE")
       ? grpc.ServerCredentials.createInsecure()
       : grpc.ServerCredentials.createSsl(
@@ -64,18 +104,14 @@ class GrpcService {
           ],
           config.get("GRPC_SERVER_CHECK_CLIENT_CERT")
         );
-    this.server.bindAsync(
-      config.get("GRPC_SERVER_URL"),
-      credentials,
-      (error, _port) => {
-        if (error) {
-          console.log(`Error occurred: `, error);
-          return;
-        }
-        console.log(`Server started at ${config.get("GRPC_SERVER_URL")}`);
-        this.server.start();
+    this.server.bindAsync(serverUrl, credentials, (err, _port) => {
+      if (err) {
+        log.error({ message: `Error occurred: `, error: err });
+        return;
       }
-    );
+      log.info(`Server started at ${serverUrl}`);
+      this.server.start();
+    });
   }
 }
 
@@ -83,7 +119,7 @@ export default new GrpcService(
   {
     inflation:
       // @ts-ignore
-      protoService.getProtoPackageDef("inflation/decade-stats.proto")["ms"][
+      protos.getProtoPackageDef("inflation/decade-stats.proto")["ms"][
         "nextjs_grpc"
       ]["Inflation"],
   },

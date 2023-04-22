@@ -1,4 +1,4 @@
-import config from "../../config";
+import config from "_config";
 import { resolve } from "path";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";

@@ -11,19 +11,24 @@
     "baseUrl": ".",
     "paths": {
       "_services/*": [
-        "src/services/*"
+        "./src/services/*"
       ],
       "_types/*": [
-        "src/types/*"
+        "./src/types/*"
       ],
       "_config": [
-        "src/config"
+        "./src/config"
+      ],
+      "_models/*": [
+        "./src/models/*"
+      ],
+      "_utils/*": [
+        "./src/utils/*"
       ]
     },
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "outDir": "./dist",
-    "removeComments": true,
     "declarationDir": "types",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -43,5 +48,8 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "./src/**/*"
+  ]
 }

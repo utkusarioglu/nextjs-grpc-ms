@@ -1,3 +1,5 @@
+import { inspect } from "util";
+
 type NconfConfig = Record<string, any>;
 
 interface RedactOptions {
@@ -68,8 +70,18 @@ export function printConfig(
     ? redactFromPrint(sorted, options.redactions)
     : sorted;
 
-  console.log({
-    message: "App using configuration options:",
-    data: redacted,
-  });
+  console.log(
+    inspect(
+      {
+        level: "debug",
+        message: "App using configuration options:",
+        metadata: {
+          config: redacted,
+        },
+      },
+      false,
+      null,
+      true
+    )
+  );
 }
