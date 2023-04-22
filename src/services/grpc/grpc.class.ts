@@ -5,11 +5,6 @@ import { api } from "@opentelemetry/sdk-node";
 import { decadeStats } from "_models/inflation/inflation.model";
 import protos from "_services/protos/protos.service";
 import log from "_services/log/log.service";
-import { pipeline } from "stream";
-import {
-  bufferToStringTransformer,
-  stringJsonToObjectTransformer,
-} from "_utils/transformer/transformer.utils";
 
 type PackageDefs = Record<string, grpc.GrpcObject>;
 interface TlsProps {

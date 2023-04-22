@@ -22,13 +22,13 @@ class JsonArrayTransformer extends Transform {
   private itemCounter = 0;
 
   constructor(...params: ConstructorParameters<typeof Transform>) {
-    super();
+    super(...params);
     this.push("[");
   }
 
   public override _transform(
     chunk: any,
-    encoding: BufferEncoding,
+    _encoding: BufferEncoding,
     callback: TransformCallback
   ): void {
     !!this.itemCounter && this.push(",");
@@ -42,6 +42,10 @@ class JsonArrayTransformer extends Transform {
   ): void {
     this.push("]");
     callback();
+  }
+
+  public getItemCount(): number {
+    return this.itemCounter;
   }
 }
 

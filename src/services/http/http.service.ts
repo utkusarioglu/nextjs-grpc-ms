@@ -1,10 +1,8 @@
 import http from "http";
 import { decadeStats } from "_models/inflation/inflation.model";
-import { pipeline, Transform } from "stream";
+import { pipeline } from "stream";
 import log from "_services/log/log.service";
 import {
-  // charCodeTransformer,
-  // bufferTransformer,
   jsonArrayTransformer,
   stringTransformer,
 } from "_utils/transformer/transformer.utils";
@@ -30,24 +28,17 @@ class HttpService {
             .then((writeCounter) => {
               log.debug("DecadeStats finished", {
                 writeCounter,
-                // closed: charCodeTransformer.closed,
+                itemCount: jsonArrayTransformer.getItemCount(),
               });
             })
             .catch((e) => {
               log.debug("Catching decade stats", { error: e });
             });
-          pipeline(
-            stringTransformer,
-            jsonArrayTransformer,
-            // bufferTransformer,
-            // charCodeTransformer,
-            res,
-            (e) => {
-              if (e) {
-                log.error("Something broken in pipeline", { error: e });
-              }
+          pipeline(stringTransformer, jsonArrayTransformer, res, (e) => {
+            if (e) {
+              log.error("Something broken in pipeline", { error: e });
             }
-          );
+          });
           return;
         default:
           res.write(JSON.stringify({ message: "Not implemented" }));
