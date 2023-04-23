@@ -1,7 +1,6 @@
 import * as grpc from "@grpc/grpc-js";
 import config from "_config";
 import { readFileSync } from "fs";
-import { api } from "@opentelemetry/sdk-node";
 import { InflationModel } from "_models/inflation/inflation.model";
 import protos from "_services/protos/protos.service";
 import log from "_services/log/log.service";

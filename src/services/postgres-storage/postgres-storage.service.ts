@@ -25,11 +25,12 @@ if (config.get("POSTGRES_STORAGE_MOCK_CONNECTION")) {
   tracker.install();
 
   tracker.on("query", (query) => {
-    // log.debug("Tracker caught query", { query });
+    const inducedLatency = Math.random() * 3e3;
+    log.debug("Queueing response", { inducedLatency });
     setTimeout(() => {
-      log.debug("response");
+      log.debug("Sending response", { inducedLatency });
       query.response(DECADE_STATS_MOCK_RESPONSE, { stream: true });
-    }, Math.random() * 3e3);
+    }, inducedLatency);
   });
 }
 
