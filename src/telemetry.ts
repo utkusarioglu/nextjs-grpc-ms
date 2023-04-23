@@ -58,11 +58,12 @@ const { main } = require("./index");
 main();
 
 process.on("SIGTERM", () => {
+  diagLogger.info("SIGTERM received, telemetry shutting down…");
   sdk
     .shutdown()
-    .then(() => diagLogger.info("Telemetry terminated"))
-    .catch((error: any) =>
-      diagLogger.error("Error during telemetry termination", { error })
+    .then(() => diagLogger.info("Telemetry terminated successfully"))
+    .catch((err: unknown) =>
+      diagLogger.error("Error during telemetry termination", { error: err })
     )
     .finally(() => process.exit(0));
 });

@@ -17,8 +17,6 @@ export class StringTransformer extends Transform {
   }
 }
 
-// export const stringTransformer = new StringTransformer();
-
 export class JsonArrayTransformer extends Transform {
   private itemCounter = 0;
 
@@ -50,9 +48,7 @@ export class JsonArrayTransformer extends Transform {
   }
 }
 
-// export const jsonArrayTransformer = new JsonArrayTransformer();
-
-export class NeutralTransformer extends Transform {
+export class LoggingTransformer extends Transform {
   constructor(...params: ConstructorParameters<typeof Transform>) {
     super({ ...params, objectMode: true });
   }
@@ -74,5 +70,3 @@ export class NeutralTransformer extends Transform {
     callback();
   }
 }
-
-// export const neutralTransformer = new NeutralTransformer();

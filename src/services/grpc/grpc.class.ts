@@ -6,7 +6,6 @@ import { InflationModel } from "_models/inflation/inflation.model";
 import protos from "_services/protos/protos.service";
 import log from "_services/log/log.service";
 import { pipeline } from "node:stream";
-// import { NeutralTransformer } from "_utils/transformer/transformer.utils";
 
 type PackageDefs = Record<string, grpc.GrpcObject>;
 interface TlsProps {
@@ -45,35 +44,16 @@ class GrpcService {
     this.server.addService(inflationService, {
       // TODO you have an `any` type here
       decadeStats: async (call: any) => {
-        const span = api.trace.getSpan(api.context.active());
-        span?.addEvent("Retrieving Inflation decade stats");
-        span?.setAttribute("some-attribute", "set some attribute");
-        try {
-          // log.debug("grpc call", { callRequest: call.request });
-
-          // const neutralTransformer = new NeutralTransformer();
-          const source = InflationModel.decadeStats(call.request);
-          // source.pipe(neutralTransformer).pipe(call);
-
-          pipeline(source, call, (e: unknown) => {
-            if (e) {
-              log.error("Something went wrong in decadeStats pipeline", {
-                error: e,
-              });
-            }
-            log.debug("Grpc call finished");
-            //   // call.end("fail");
-          });
-        } catch (e: any) {
-          // span?.recordException(e);
-          // span?.setStatus({ code: api.SpanStatusCode.ERROR });
-          // log.error("Error during grpc retrieval", { error: e });
-        } finally {
-          // call.end("error");
-          // TODO find out if it's safe to enable these
-          // span.addEvent("Finished Sending Greeting");
-          // span.end();
-        }
+        // @ts-expect-error
+        const source = InflationModel.decadeStats(call.request);
+        pipeline(source, call, (e: unknown) => {
+          if (e) {
+            log.error("Something went wrong in decadeStats pipeline", {
+              error: e,
+            });
+          }
+          log.debug("Grpc call finished");
+        });
       },
     });
     return this;

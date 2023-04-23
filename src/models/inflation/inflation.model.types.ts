@@ -14,7 +14,7 @@ export interface DecadeStatsRow {
   variance: number; // float
 }
 
-interface MethodParams {
+export interface MethodParams {
   codes: string[];
 }
 
