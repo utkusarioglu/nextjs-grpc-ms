@@ -29,7 +29,7 @@ ARG GROUP
 RUN sh -c 'echo "root:$ROOT_PASS" | chpasswd'
 RUN sh -c 'echo "node:$ROOT_PASS" | chpasswd'
 
-WORKDIR $PROJECT_ABSPATH/ms
+WORKDIR /utkusarioglu-com/projects/nextjs-grpc/ms
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/dist dist
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/scripts scripts
 COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/package.json package.json
