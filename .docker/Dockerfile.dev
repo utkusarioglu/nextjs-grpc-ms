@@ -3,20 +3,19 @@ FROM node:19-slim AS builder
 ARG ROOT_PASS
 ARG USERNAME
 ARG GROUP
-ARG PROJECT_ABSPATH=/utkusarioglu-com/projects/nextjs-grpc
 
 RUN sh -c 'echo "root:$ROOT_PASS" | chpasswd'
 RUN sh -c 'echo "node:$ROOT_PASS" | chpasswd'
 
 RUN apt update && apt install -y jq
 
-WORKDIR $PROJECT_ABSPATH/ms
-COPY ms $PROJECT_ABSPATH/ms
-COPY proto $PROJECT_ABSPATH/proto
-RUN chown -R $CONTAINER_USERNAME:$CONTAINER_GROUP $PROJECT_ABSPATH
+WORKDIR /utkusarioglu-com/projects/nextjs-grpc/ms
+COPY ms /utkusarioglu-com/projects/nextjs-grpc/ms
+COPY proto /utkusarioglu-com/projects/nextjs-grpc/proto
+RUN chown -R $CONTAINER_USERNAME:$CONTAINER_GROUP /utkusarioglu-com/projects/nextjs-grpc
 
-RUN ls -al $PROJECT_ABSPATH/ms
-RUN ls -al $PROJECT_ABSPATH/proto
+RUN ls -al /utkusarioglu-com/projects/nextjs-grpc/ms
+RUN ls -al /utkusarioglu-com/projects/nextjs-grpc/proto
 
 RUN yarn
 RUN yarn build
@@ -26,23 +25,22 @@ FROM node:19-slim AS runner
 ARG ROOT_PASS
 ARG USERNAME
 ARG GROUP
-ARG PROJECT_ABSPATH=/utkusarioglu-com/projects/nextjs-grpc
 
 RUN sh -c 'echo "root:$ROOT_PASS" | chpasswd'
 RUN sh -c 'echo "node:$ROOT_PASS" | chpasswd'
 
 WORKDIR $PROJECT_ABSPATH/ms
-COPY --from=builder $PROJECT_ABSPATH/ms/dist dist
-COPY --from=builder $PROJECT_ABSPATH/ms/scripts scripts
-COPY --from=builder $PROJECT_ABSPATH/ms/package.json package.json
-COPY --from=builder $PROJECT_ABSPATH/ms/yarn.lock yarn.lock
-COPY --from=builder $PROJECT_ABSPATH/ms/tsconfig-paths.js tsconfig-paths.js
+COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/dist dist
+COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/scripts scripts
+COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/package.json package.json
+COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/yarn.lock yarn.lock
+COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/ms/tsconfig-paths.js tsconfig-paths.js
 
-WORKDIR $PROJECT_ABSPATH/proto
-COPY --from=builder $PROJECT_ABSPATH/proto/src src
+WORKDIR /utkusarioglu-com/projects/nextjs-grpc/proto
+COPY --from=builder /utkusarioglu-com/projects/nextjs-grpc/proto/src src
 RUN rm -rf src/defunct
 
-WORKDIR $PROJECT_ABSPATH/ms
+WORKDIR /utkusarioglu-com/projects/nextjs-grpc/ms
 RUN yarn --frozen-lockfile --prod
 
 USER $USERNAME
