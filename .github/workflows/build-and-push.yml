@@ -54,7 +54,7 @@ jobs:
           files: |
             ${{ matrix.images.dockerfile }}
             ${{ matrix.images.readmeFile }}
-            ${{ matrix.images.repoRelPath }}/src
+            src
             .github/workflows/build-and-push.yml
             ${{ matrix.images.additionalFilesToWatch }}
 
