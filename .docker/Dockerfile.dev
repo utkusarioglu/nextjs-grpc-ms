@@ -8,11 +8,16 @@ ARG PROJECT_ABSPATH=/utkusarioglu-com/projects/nextjs-grpc
 RUN sh -c 'echo "root:$ROOT_PASS" | chpasswd'
 RUN sh -c 'echo "node:$ROOT_PASS" | chpasswd'
 
-RUN apt update 
+RUN apt update && apt install -y jq
+
 WORKDIR $PROJECT_ABSPATH/ms
 COPY ms $PROJECT_ABSPATH/ms
 COPY proto $PROJECT_ABSPATH/proto
 RUN chown -R $CONTAINER_USERNAME:$CONTAINER_GROUP $PROJECT_ABSPATH
+
+RUN ls -al $PROJECT_ABSPATH/ms
+RUN ls -al $PROJECT_ABSPATH/proto
+
 RUN yarn
 RUN yarn build
 
