@@ -6,6 +6,7 @@ import {
   JsonArrayTransformer,
   StringTransformer,
 } from "_utils/transformer/transformer.utils";
+import config from "_config";
 
 // On second call, the http callback doesn't return anything
 // Grpc callback only returns default values
@@ -50,9 +51,10 @@ class HttpService {
   }
 
   public startServer() {
-    log.info("Starting http server", {port: config.get("HTTP_SERVER_PORT")})
+    const httpServerPort = config.get("HTTP_SERVER_PORT");
+    log.info("Starting http server", { port: httpServerPort });
     const httpServer = http.createServer(this.requestListener());
-    httpServer.listen(config.get("HTTP_SERVER_PORT"));
+    httpServer.listen(httpServerPort);
   }
 }
 
