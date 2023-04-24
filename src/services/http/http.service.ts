@@ -50,8 +50,9 @@ class HttpService {
   }
 
   public startServer() {
+    log.info("Starting http server", {port: config.get("HTTP_SERVER_PORT")})
     const httpServer = http.createServer(this.requestListener());
-    httpServer.listen(8000);
+    httpServer.listen(config.get("HTTP_SERVER_PORT"));
   }
 }
 
