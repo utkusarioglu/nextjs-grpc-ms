@@ -1,0 +1,70 @@
+features:
+  otel: true
+  grpcServer: true
+  httpServer: true
+  
+grpcServer:
+  host: 0.0.0.0
+  port: 50051
+  trace: all
+  logs:
+    verbosity: info
+  tls:
+    disable: false
+    checkClientCert: true
+
+httpServer:
+  port: 8080
+
+otel:
+  service:
+    name: ms
+    namespace: ms
+  trace:
+    host: localhost
+    port: 4317
+    logToConsole: true
+  metrics:
+    port: 9464
+  logs:
+    level: debug
+    format: json
+    time:
+      format: 'YYYY-MM-DD HH:mm:ss'
+    summary:
+      logToConsoleLevels:
+        - debug
+        - info
+  
+paths:
+  repos:
+    root:
+      absPath: /utkusarioglu-com/projects/nextjs-grpc
+    ms:
+      relPath: ms
+    protos:
+      relPath: proto/src
+  certificates:
+    root:
+      absPath: /utkusarioglu-com/projects/nextjs-grpc/.certs
+    grpcServer:
+      relPath: grpc-server
+  credentials:
+    root:
+      absPath: /utkusarioglu-com/projects/nextjs-grpc/.secrets
+    postgresStorage:
+      relPath: ms.yaml
+
+postgresStorage:
+  connection:
+    host: localhost
+    port: 5432
+  credentials:
+    username: postgres
+    password: postgres
+  queries:
+    timeout: 5000
+  mock:
+    data: false
+
+  

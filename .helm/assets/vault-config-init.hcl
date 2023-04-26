@@ -22,8 +22,10 @@ template = {
   destination = "/vault/secrets/postgres-storage/inflation.yaml"
   contents = <<-EOF
   {{- with secret "postgres-storage/inflation/creds/ms" -}}
-  POSTGRES_STORAGE_USERNAME: "{{ .Data.username }}"
-  POSTGRES_STORAGE_PASSWORD: "{{ .Data.password }}"
+  postgresStorage:
+    credentials:
+      username: "{{ .Data.username }}"
+      password: "{{ .Data.password }}"
   {{- end }}
   EOF
 }

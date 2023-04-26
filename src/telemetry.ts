@@ -24,23 +24,23 @@ const instrumentations = [
   }),
 ];
 
-const traceExporter = config.get("OTEL_TRACE_TO_CONSOLE")
+const traceExporter = config.get("otel:trace:logToConsole")
   ? () => new ConsoleSpanExporter()
   : () =>
       new OTLPTraceExporter({
-        url: config.get("OTEL_TRACE_URL"),
+        url: config.get("otel:trace:url"),
         credentials: credentials.createInsecure(),
         metadata: new Metadata(),
       });
 diag.setLogger(diagLogger, DiagLogLevel.INFO);
 
-const prometheusPort = config.get("OTEL_METRICS_PORT");
+const prometheusPort = config.get("otel:metrics:port");
 const metricReader = new PrometheusExporter({ port: prometheusPort }, () =>
   diagLogger.info(`metrics @ ms.ms:${prometheusPort}/metrics`)
 );
 
-const serviceName = config.get("OTEL_SERVICE_NAME");
-const serviceNamespace = config.get("OTEL_SERVICE_NAMESPACE");
+const serviceName = config.get("otel:service:name");
+const serviceNamespace = config.get("otel:service:namespace");
 const sdk = new NodeSDK({
   serviceName,
   autoDetectResources: true,

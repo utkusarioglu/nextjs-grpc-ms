@@ -78,36 +78,39 @@ affinity: {}
 
 env:
   RUN_MODE: development
+    
+  HTTP_SERVER_PORT: 8080
 
   GRPC_SERVER_HOST: 0.0.0.0
   GRPC_SERVER_PORT: 50051
   GRPC_SERVER_CERT_SUBPATH: grpc-server
-  GRPC_SERVER_TLS_DISABLE: false
-  GRPC_SERVER_LOG_VERBOSITY: WARN
-  GRPC_SERVER_TRACE: all
-  GRPC_SERVER_CHECK_CLIENT_CERT: true
+  # GRPC_SERVER_TLS_DISABLE: false
+  # GRPC_SERVER_LOG_VERBOSITY: WARN
+  # GRPC_SERVER_TRACE: all
+  # GRPC_SERVER_CHECK_CLIENT_CERT: true
 
   OTEL_TRACE_HOST: otel-trace-collector.observability
   OTEL_TRACE_PORT: 4317
-  OTEL_ENABLE_INSTRUMENTATION: false
+  # OTEL_ENABLE_INSTRUMENTATION: false
   OTEL_METRICS_PORT: 9464
-  OTEL_SERVICE_NAME: nextjs-grpc-ms
-  OTEL_SERVICE_NAMESPACE: ms
+  # OTEL_SERVICE_NAME: nextjs-grpc-ms
+  # OTEL_SERVICE_NAMESPACE: ms
 
-  PROJECT_ROOT_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc
+  PROJECT_ROOT_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc # TODO Get rid of this
 
   REPO_MS_SUBPATH: ms
-  REPO_PROTOS_SUBPATH: proto/src
+  # REPO_PROTOS_SUBPATH: proto/src
 
-  CERTS_ABSPATH: /.certs
+  CERTIFICATES_ABSPATH: /.certificates 
+  CREDENTIALS_ABSPATH: /.credentials
 
-  POSTGRES_STORAGE_CREDS_ABSPATH: '.secrets/ms.yaml'
+  # POSTGRES_STORAGE_CREDS_ABSPATH: '.secrets/ms.yaml'
   POSTGRES_STORAGE_HOST: postgres-storage.ms
   POSTGRES_STORAGE_PORT: 5432
 
-  LOG_FORMAT: json
-  LOG_LEVEL: warning
-  LOG_TIME_FORMAT: 'YYYY-MM-DD HH:mm:ss'
+  # LOG_FORMAT: json
+  # LOG_LEVEL: warning
+  # LOG_TIME_FORMAT: 'YYYY-MM-DD HH:mm:ss'
 
 cloudProvider:
   isLocal: false

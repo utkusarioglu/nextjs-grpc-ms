@@ -24,4 +24,4 @@ class ProtoService {
   }
 }
 
-export default new ProtoService(config.get("REPO_PROTOS_ABSPATH"));
+export default new ProtoService(config.get("paths:repos:protos:absPath"));

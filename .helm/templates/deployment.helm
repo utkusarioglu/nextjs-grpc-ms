@@ -33,21 +33,29 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          {{- with .Values.env }}
           ports:
             - name: grpc
-              containerPort: 50051
+              containerPort: {{ .GRPC_SERVER_PORT | quote }}
               protocol: TCP
             - name: http
-              containerPort: 80
+              containerPort: {{ .HTTP_SERVER_PORT | quote }}
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+            - name: metrics
+              containerPort: {{ .OTEL_METRICS_PORT | quote }}
+              protocol: TCP
+
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: {{ .OTEL_METRICS_PORT | quote }}
           # readinessProbe:
           #   httpGet:
           #     path: /
           #     port: http
+          {{- end }}
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -74,9 +82,13 @@ spec:
                 ) | quote
               }}
               readOnly: true
-            # - name: "vault-api-tls-client-ca"
-            #   mountPath: "/vault/tls"
-            #   readOnly: true
+            - name: ms-config
+              mountPath: {{ ( printf "%s/%s/%s" 
+                .PROJECT_ROOT_ABSPATH 
+                .REPO_MS_SUBPATH 
+                "config/user/config.yml" | quote 
+              ) }}
+              readOnly: true
             {{- end -}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -99,11 +111,9 @@ spec:
         - name: {{ .Values.certSecretNames.msGrpcServer | quote }}
           secret:
             secretName: {{ .Values.certSecretNames.msGrpcServer | quote }}
-        # - name: "vault-api-tls-client-ca"
-        #   secret:
-        #     secretName: "vault-api-tls-client-ca"
-        #     optional: false
-        #     items:
-        #       - key: tls.crt
-        #         path: tls.crt
-        
+        - name: ms-config
+          configMap:
+            name: ms-config
+            items:
+              - key: config.yml
+                path: config.yml

@@ -8,17 +8,17 @@ const knexInstance = knex({
   client: "pg",
   debug: true,
   connection: {
-    host: config.get("POSTGRES_STORAGE_HOST"),
-    port: config.get("POSTGRES_STORAGE_PORT"),
-    user: config.get("POSTGRES_STORAGE_USERNAME"),
-    password: config.get("POSTGRES_STORAGE_PASSWORD"),
+    host: config.get("postgresStorage:connection:host"),
+    port: config.get("postgresStorage:connection:port"),
+    user: config.get("postgresStorage:credentials:username"),
+    password: config.get("postgresStorage:credentials:password"),
     database: "inflation",
   },
   pool: { min: 1, max: 5 },
   log,
 });
 
-if (config.get("POSTGRES_STORAGE_MOCK_CONNECTION")) {
+if (config.get("postgresStorage:mock:data")) {
   mockDb.mock(knexInstance);
 
   const tracker = mockDb.getTracker();

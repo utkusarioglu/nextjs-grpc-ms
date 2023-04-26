@@ -51,10 +51,12 @@ class HttpService {
   }
 
   public startServer() {
-    const httpServerPort = config.get("HTTP_SERVER_PORT");
+    const httpServerPort = config.get("httpServer:port");
     log.info("Starting http server", { port: httpServerPort });
     const httpServer = http.createServer(this.requestListener());
-    httpServer.listen(httpServerPort);
+    httpServer.listen(httpServerPort, () => {
+      log.info("Started http server", { port: httpServerPort });
+    });
   }
 }
 

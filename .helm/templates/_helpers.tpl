@@ -82,5 +82,5 @@ Produce repo path from project path and repo subpath
 Produce absolute path for a single cert
 */}}
 {{- define "ms.singleCertPath" -}}
-{{- printf "%s/%s" .global.Values.env.CERTS_ABSPATH .subpath -}}
+{{- printf "%s/%s" .global.Values.env.CERTIFICATES_ABSPATH .subpath -}}
 {{- end -}}

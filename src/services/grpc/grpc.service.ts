@@ -43,6 +43,7 @@ class GrpcService {
     this.server.addService(inflationService, {
       // TODO you have an `any` type here
       decadeStats: async (call: any) => {
+        log.debug("Received grpc.decadeStats", { request: call.request });
         // @ts-expect-error
         const source = InflationModel.decadeStats(call.request);
         pipeline(source, call, (e: unknown) => {
@@ -59,8 +60,8 @@ class GrpcService {
   }
 
   public startServer(): void {
-    const serverUrl = config.get("GRPC_SERVER_URL");
-    const credentials = config.get("GRPC_SERVER_TLS_DISABLE")
+    const serverUrl = config.get("grpcServer:url");
+    const credentials = config.get("grpcServer:tls:disable")
       ? grpc.ServerCredentials.createInsecure()
       : grpc.ServerCredentials.createSsl(
           this.tlsProps.crt,
@@ -70,7 +71,7 @@ class GrpcService {
               cert_chain: this.tlsProps.crt,
             },
           ],
-          config.get("GRPC_SERVER_CHECK_CLIENT_CERT")
+          config.get("grpcServer:tls:checkClientCert")
         );
     this.server.bindAsync(serverUrl, credentials, (err, _port) => {
       if (err) {
@@ -92,7 +93,11 @@ export default new GrpcService(
       ]["Inflation"],
   },
   {
-    crt: readFileSync(config.get("GRPC_SERVER_CERT_TLS_CRT_ABSPATH")),
-    key: readFileSync(config.get("GRPC_SERVER_CERT_TLS_KEY_ABSPATH")),
+    crt: readFileSync(
+      config.get("paths:certificates:grpcServer:tlsCrtAbsPath")
+    ),
+    key: readFileSync(
+      config.get("paths:certificates:grpcServer:tlsKeyAbsPath")
+    ),
   }
 );

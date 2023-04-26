@@ -1,0 +1,60 @@
+configValueCombinations:
+  - target: paths:credentials:postgresStorage:absPath
+    joiner: /
+    components:
+      - value: paths:credentials:root:absPath
+        type: configPath
+      - value: paths:credentials:postgresStorage:relPath
+        type: configPath
+  
+  - target: grpcServer:url
+    joiner: ":"
+    components:
+      - value: grpcServer:host
+        type: configPath
+      - value: grpcServer:port
+        type: configPath
+
+  - target: paths:certificates:grpcServer:absPath
+    joiner: /
+    components:
+      - value: paths:certificates:root:absPath
+        type: configPath
+      - value: paths:certificates:grpcServer:relPath
+        type: configPath
+  
+  - target: paths:certificates:grpcServer:tlsCrtAbsPath
+    joiner: /
+    components:
+      - value: paths:certificates:grpcServer:absPath
+        type: configPath
+      - value: tls.crt
+        type: string
+    
+  - target: paths:certificates:grpcServer:tlsKeyAbsPath
+    joiner: /
+    components:
+      - value: paths:certificates:grpcServer:absPath
+        type: configPath
+      - value: tls.key
+        type: string
+
+  - target: paths:repos:protos:absPath
+    joiner: /
+    components: 
+      - value: paths:repos:root:absPath
+        type: configPath
+      - value: paths:repos:protos:relPath
+        type: configPath
+
+  - target: otel:trace:url
+    joiner: ""
+    components:
+      - value: grpc://
+        type: string
+      - value: otel:trace:host
+        type: configPath
+      - value: ":"
+        type: string
+      - value: otel:trace:port
+        type: configPath

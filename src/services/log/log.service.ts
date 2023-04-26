@@ -19,7 +19,7 @@ const logFormat = printf(({ level, message, timestamp, stack, ...rest }) =>
   ].join("")
 );
 
-const level = config.get("LOG_LEVEL");
+const level = config.get("otel:logs:level");
 
 function textLogger() {
   return createLogger({
@@ -27,7 +27,7 @@ function textLogger() {
     level,
     format: combine(
       colorize(),
-      timestamp({ format: config.get("LOG_TIME_FORMAT") }),
+      timestamp({ format: config.get("otel:logs:time:format") }),
       errors({ stack: true }),
       logFormat
     ),
@@ -48,7 +48,7 @@ function jsonLogger() {
 }
 
 const logService =
-  config.get("LOG_FORMAT") === "TEXT" ? textLogger() : jsonLogger();
+  config.get("otel:logs:format") === "TEXT" ? textLogger() : jsonLogger();
 
 export default Object.freeze(logService);
 

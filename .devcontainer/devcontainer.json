@@ -22,7 +22,8 @@
   "extensions": [
     "zxh404.vscode-proto3",
     "hashicorp.hcl",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "Tim-Koehler.helm-intellisense"
     // "ms-kubernetes-tools.vscode-kubernetes-tools",
     // "mindaro.mindaro"
   ],
