@@ -37,19 +37,19 @@ spec:
           {{- with .Values.env }}
           ports:
             - name: grpc
-              containerPort: {{ .GRPC_SERVER_PORT | quote }}
+              containerPort: {{ .GRPC_SERVER_PORT }}
               protocol: TCP
             - name: http
-              containerPort: {{ .HTTP_SERVER_PORT | quote }}
+              containerPort: {{ .HTTP_SERVER_PORT }}
               protocol: TCP
             - name: metrics
-              containerPort: {{ .OTEL_METRICS_PORT | quote }}
+              containerPort: {{ .OTEL_METRICS_PORT }}
               protocol: TCP
 
           livenessProbe:
             httpGet:
               path: /metrics
-              port: {{ .OTEL_METRICS_PORT | quote }}
+              port: {{ .OTEL_METRICS_PORT }}
           # readinessProbe:
           #   httpGet:
           #     path: /
@@ -86,7 +86,7 @@ spec:
               mountPath: {{ ( printf "%s/%s/%s" 
                 .PROJECT_ROOT_ABSPATH 
                 .REPO_MS_SUBPATH 
-                "config/user/config.yml" | quote 
+                "config/user" | quote 
               ) }}
               readOnly: true
             {{- end -}}

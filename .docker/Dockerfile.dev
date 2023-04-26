@@ -33,6 +33,7 @@ RUN sh -c 'echo "node:$ROOT_PASS" | chpasswd'
 WORKDIR $PROJECT_ABSPATH/ms
 COPY --from=builder $PROJECT_ABSPATH/ms/dist dist
 COPY --from=builder $PROJECT_ABSPATH/ms/scripts scripts
+COPY --from=builder $PROJECT_ABSPATH/ms/config config
 COPY --from=builder $PROJECT_ABSPATH/ms/package.json package.json
 COPY --from=builder $PROJECT_ABSPATH/ms/yarn.lock yarn.lock
 COPY --from=builder $PROJECT_ABSPATH/ms/tsconfig-paths.js tsconfig-paths.js
