@@ -102,3 +102,15 @@ configValueChecks:
     tests:
       - test: valueEqualTo
         value: UTC0
+
+  - configPath: otel:logs:level
+    tests:
+      - test: type
+        value: string
+      - test: valueIsALogLegalLevel
+
+  - configPath: otel:logs:format
+    tests:
+      - test: type
+        value: string
+      - test: valueIsALogLegalFormat

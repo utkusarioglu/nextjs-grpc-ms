@@ -77,6 +77,20 @@ interface ValueEqualToCheck {
   value: number;
 }
 
+interface ValueOneOfCheck {
+  test: "valueOneOf";
+  values: (string | number)[];
+}
+
+interface ValueIsALogLegalLevelCheck {
+  test: "valueIsALogLegalLevel";
+  value: string;
+}
+
+interface ValueIsALogLegalFormatCheck {
+  test: "valueIsALogLegalFormat";
+  value: string;
+}
 export interface ConfigValueCheck {
   configPath: string;
   tests: (
@@ -86,5 +100,13 @@ export interface ConfigValueCheck {
     | ValueGreaterThanCheck
     | ValueLessThanCheck
     | ValueEqualToCheck
+    | ValueOneOfCheck
+    | ValueIsALogLegalLevelCheck
+    | ValueIsALogLegalFormatCheck
   )[];
+}
+
+export interface ConfigManualTransform {
+  target: string;
+  type: "lowerCase" | "upperCase" | "lowerCaseArray" | "upperCaseArray";
 }

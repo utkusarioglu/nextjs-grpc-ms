@@ -8,13 +8,16 @@ import {
   type Prop,
 } from "_utils/config/config.utils";
 import {
-  LOG_LEGAL_LEVEL_KEYS,
-  LOG_LEGAL_FORMATS,
+  LOG_CONFIG_ACCEPTED_FORMATS,
+  LOG_CONFIG_ACCEPTED_LEVEL_KEYS,
+  // LOG_LEGAL_LEVEL_KEYS,
+  // LOG_LEGAL_FORMATS,
 } from "_services/log/log.constants";
 import type {
   EnvAssignment,
   ConfigValueCombination,
   ConfigValueCheck,
+  ConfigManualTransform,
 } from "_utils/config/config.utils.types";
 
 nconf
@@ -70,6 +73,14 @@ nconf.file("config-value-checks", {
   },
 });
 
+nconf.file("config-manual-transforms", {
+  file: "./config/config-manual-transforms.yml",
+  format: {
+    parse: yaml.parse,
+    stringify: yaml.stringify,
+  },
+});
+
 nconf
   .file("vault-postgres-storage", {
     file: nconf.get("paths:credentials:postgresStorage:relPath"),
@@ -100,7 +111,7 @@ nconf
         case "string":
           return value;
         default:
-          throw new Error(`UNRECOGNIZED_CONFIG_COMPONENT_TYPE "${type}"`);
+          throw new Error(`UNRECOGNIZED_CONFIG_COMPONENT_TYPE: "${type}"`);
       }
     });
     nconf.set(target, source.join(joiner));
@@ -109,35 +120,107 @@ nconf
 nconf
   .get("configValueChecks")
   .forEach(({ configPath, tests }: ConfigValueCheck) => {
-    tests.forEach(({ value, test }) => {
-      const failMessage = `Assertion fail: ${configPath}: ${test} => ${value}`;
-      switch (test) {
+    tests.forEach((params) => {
+      const failMessagePrefix = `Assertion fail: ${configPath}: ${params.test} =>`;
+      const configValue = nconf.get(configPath);
+      switch (params.test) {
         case "type":
-          assert(typeof nconf.get(configPath) === value, failMessage);
+          assert(
+            typeof configValue === params.value,
+            [failMessagePrefix, params.value].join(" ")
+          );
           break;
 
         case "lengthGreaterThan":
-          assert(nconf.get(configPath).length > value, failMessage);
+          assert(
+            configValue.length > params.value,
+            [failMessagePrefix, params.value].join(" ")
+          );
           break;
         case "lengthLessThan":
-          assert(nconf.get(configPath).length < value, failMessage);
+          assert(
+            configValue.length < params.value,
+            [failMessagePrefix, params.value].join(" ")
+          );
           break;
 
         case "valueGreaterThan":
-          assert(nconf.get(configPath) > value, failMessage);
+          assert(
+            configValue > params.value,
+            [failMessagePrefix, params.value].join(" ")
+          );
           break;
         case "valueLessThan":
-          assert(nconf.get(configPath) < value, failMessage);
+          assert(
+            configValue < params.value,
+            [failMessagePrefix, params.value].join(" ")
+          );
           break;
 
         case "valueEqualTo":
-          assert(nconf.get(configPath) === value, failMessage);
+          assert(
+            configValue === params.value,
+            [failMessagePrefix, params.value].join(" ")
+          );
+          break;
+
+        case "valueOneOf":
+          assert(
+            params.values.includes(configValue),
+            [failMessagePrefix, configValue].join(" ")
+          );
+          break;
+
+        case "valueIsALogLegalFormat":
+          assert(
+            LOG_CONFIG_ACCEPTED_FORMATS.includes(configValue),
+            [failMessagePrefix, params.value, configValue].join(" ")
+          );
+          break;
+
+        case "valueIsALogLegalLevel":
+          const val = nconf.get(configPath);
+          assert(
+            LOG_CONFIG_ACCEPTED_LEVEL_KEYS.includes(val),
+            [failMessagePrefix, params.value, val].join(" ")
+          );
           break;
 
         default:
-          throw new Error(`UNRECOGNIZED_TEST_TYPE "${test}"`);
+          // @ts-ignore
+          throw new Error(`UNRECOGNIZED_TEST_TYPE: "${params.test}"`);
       }
     });
+  });
+
+nconf
+  .get("configManualTransforms")
+  .forEach(({ target, type }: ConfigManualTransform) => {
+    const rawValue = nconf.get(target);
+    switch (type) {
+      case "upperCase":
+        nconf.set(target, rawValue.toUpperCase());
+        break;
+      case "lowerCase":
+        nconf.set(target, rawValue.toLowerCase());
+        break;
+
+      case "lowerCaseArray":
+        nconf.set(
+          target,
+          rawValue.map((s: string) => s.toLowerCase())
+        );
+        break;
+      case "upperCaseArray":
+        nconf.set(
+          target,
+          rawValue.map((s: string) => s.toUpperCase())
+        );
+        break;
+
+      default:
+        throw new Error(`ILLEGAL_TRANSFORMATION: "${type}"`);
+    }
   });
 
 configPrinter.printConfig(nconf, {

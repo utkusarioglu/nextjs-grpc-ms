@@ -9,6 +9,16 @@ export const LOG_LEGAL_LEVELS = {
   debug: 7,
 };
 
-export const LOG_LEGAL_LEVEL_KEYS = Object.keys(LOG_LEGAL_LEVELS);
+const LOG_LEGAL_LEVEL_KEYS = Object.keys(LOG_LEGAL_LEVELS);
 
-export const LOG_LEGAL_FORMATS = ["TEXT", "JSON"];
+export const LOG_CONFIG_ACCEPTED_LEVEL_KEYS = [
+  ...LOG_LEGAL_LEVEL_KEYS,
+  ...LOG_LEGAL_LEVEL_KEYS.map((key) => key.toUpperCase()),
+];
+
+const LOG_LEGAL_FORMATS = ["TEXT", "JSON"];
+
+export const LOG_CONFIG_ACCEPTED_FORMATS = [
+  ...LOG_LEGAL_FORMATS,
+  ...LOG_LEGAL_FORMATS.map((format) => format.toLowerCase()),
+];

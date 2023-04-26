@@ -51,12 +51,3 @@ const logService =
   config.get("otel:logs:format") === "TEXT" ? textLogger() : jsonLogger();
 
 export default Object.freeze(logService);
-
-// export const emerg = logService.emerg;
-// export const alert = logService.alert;
-// export const crit = logService.crit;
-// export const error = logService.error;
-// export const warning = logService.warning;
-// export const notice = logService.notice;
-// export const info = logService.info;
-// export const debug = logService.debug;
