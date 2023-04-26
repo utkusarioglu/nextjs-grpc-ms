@@ -10,8 +10,6 @@ import {
 import {
   LOG_CONFIG_ACCEPTED_FORMATS,
   LOG_CONFIG_ACCEPTED_LEVEL_KEYS,
-  // LOG_LEGAL_LEVEL_KEYS,
-  // LOG_LEGAL_FORMATS,
 } from "_services/log/log.constants";
 import type {
   EnvAssignment,
