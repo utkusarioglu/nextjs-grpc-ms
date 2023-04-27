@@ -47,6 +47,14 @@ nconf.file("defaults", {
   },
 });
 
+nconf.file("internal", {
+  file: "./config/internal.yml",
+  format: {
+    parse: yaml.parse,
+    stringify: yaml.stringify,
+  },
+});
+
 nconf.file("env-assignments", {
   file: "./config/env-assignments.yml",
   format: {
@@ -81,7 +89,7 @@ nconf.file("config-manual-transforms", {
 
 nconf
   .file("vault-postgres-storage", {
-    file: nconf.get("paths:credentials:postgresStorage:relPath"),
+    file: nconf.get("paths:credentials:postgresStorage:inflation:relPath"),
     format: {
       parse: yaml.parse,
       stringify: yaml.stringify,
@@ -195,29 +203,34 @@ nconf
   .get("configManualTransforms")
   .forEach(({ target, type }: ConfigManualTransform) => {
     const rawValue = nconf.get(target);
-    switch (type) {
-      case "upperCase":
-        nconf.set(target, rawValue.toUpperCase());
-        break;
-      case "lowerCase":
-        nconf.set(target, rawValue.toLowerCase());
-        break;
+    try {
+      switch (type) {
+        case "upperCase":
+          nconf.set(target, rawValue.toUpperCase());
+          break;
+        case "lowerCase":
+          nconf.set(target, rawValue.toLowerCase());
+          break;
 
-      case "lowerCaseArray":
-        nconf.set(
-          target,
-          rawValue.map((s: string) => s.toLowerCase())
-        );
-        break;
-      case "upperCaseArray":
-        nconf.set(
-          target,
-          rawValue.map((s: string) => s.toUpperCase())
-        );
-        break;
+        case "lowerCaseArray":
+          nconf.set(
+            target,
+            rawValue.map((s: string) => s.toLowerCase())
+          );
+          break;
+        case "upperCaseArray":
+          nconf.set(
+            target,
+            rawValue.map((s: string) => s.toUpperCase())
+          );
+          break;
 
-      default:
-        throw new Error(`ILLEGAL_TRANSFORMATION: "${type}"`);
+        default:
+          throw new Error(`ILLEGAL_TRANSFORMATION: "${type}"`);
+      }
+    } catch (e) {
+      console.log(`configManualTransform failed for ${target}, ${type}`);
+      console.log(e);
     }
   });
 

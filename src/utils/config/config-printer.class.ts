@@ -6,18 +6,17 @@ import type {
   PrintConfigOptions,
 } from "./config.utils.types";
 
-export const REDACTED_PHRASE = "REDACTED";
-
 export class ConfigPrinter {
   private redactFromPrint(
     config: NconfConfig,
-    options: RedactOptions
+    options: RedactOptions,
+    redactedPhrase: string
   ): NconfConfig {
     options.forEach((pathStr) => {
       const path = pathStr.split(":");
       path.reduce((acc, cur, i, arr) => {
         if (i === arr.length - 1) {
-          acc[cur] = REDACTED_PHRASE;
+          acc[cur] = redactedPhrase;
         } else {
           acc = acc[cur];
         }
@@ -46,23 +45,34 @@ export class ConfigPrinter {
       return;
     }
 
+    const redactedPhrase = config.get("otel:logs:summary:redactedPhrase");
     let base = { ...config.get() };
     const sorted = this.sortForPrint(base);
     const redacted = options.redactions
-      ? this.redactFromPrint(sorted, options.redactions)
+      ? this.redactFromPrint(sorted, options.redactions, redactedPhrase)
       : sorted;
 
-    console.log(
-      inspect(
-        {
+    if (config.get("NODE_ENV") === "development") {
+      console.log(
+        inspect(
+          {
+            level: "debug",
+            message: "App using configuration options:",
+            config: redacted,
+          },
+          false,
+          null,
+          true
+        )
+      );
+    } else {
+      console.log(
+        JSON.stringify({
           level: "debug",
           message: "App using configuration options:",
           config: redacted,
-        },
-        false,
-        null,
-        true
-      )
-    );
+        })
+      );
+    }
   }
 }

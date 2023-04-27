@@ -29,7 +29,7 @@ configManualTransforms:
     type: lowerCase
   - target: paths:credentials:root:absPath
     type: lowerCase
-  - target: paths:credentials:postgresStorage:relPath
+  - target: paths:credentials:postgresStorage:inflation:relPath
     type: lowerCase
 
   - target: postgresStorage:connection:host

@@ -1,0 +1,19 @@
+paths:
+  repos:
+    root:
+      absPath: /utkusarioglu-com/projects/nextjs-grpc
+    ms:
+      relPath: ms
+    protos:
+      relPath: proto/src
+  certificates:
+    root:
+      absPath: /utkusarioglu-com/projects/nextjs-grpc/.certs
+    grpcServer:
+      relPath: grpc-server
+  credentials:
+    root:
+      absPath: /utkusarioglu-com/projects/nextjs-grpc/.secrets
+    postgresStorage:
+      inflation:
+        relPath: postgres-storage/inflation/creds/ms.yaml

@@ -12,7 +12,7 @@ export class InflationModel {
   @meterPerformance("decade_stats")
   @trace()
   public static decadeStats({ codes }: MethodParams, span: api.Span) {
-    span.addEvent("Adding event from inside method");
+    span && span.addEvent("Adding event from inside method");
     return knex
       .select({
         countryName: "country_name",

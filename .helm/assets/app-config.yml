@@ -1,50 +1,54 @@
-features:
-  otel: true
-  grpcServer: true
-  httpServer: true
+# features:
+#   otel: true
+#   grpcServer: true
+#   httpServer: true
   
 grpcServer:
-  host: 0.0.0.0
-  port: 50051
+  # host: 0.0.0.0
+  # port: 50051
   trace: all
   logs:
     verbosity: info
   tls:
-    disable: false
-    checkClientCert: true
+    disable: true
+    checkClientCert: false
 
-httpServer:
-  port: 8080
+# httpServer:
+#   port: 8080
 
 otel:
-  service:
-    name: ms
-    namespace: ms
+  # service:
+  #   name: ms
+  #   namespace: ms
   trace:
-    host: localhost
-    port: 4317
-    logToConsole: true
-  metrics:
-    port: 9464
+    host: otel-trace-collector.observability
+    # port: 4317
+    logToConsole: false
+  # metrics:
+  #   port: 9464
   logs:
     level: debug
     format: json
-    time:
-      format: 'YYYY-MM-DD HH:mm:ss'
+    # time:
+    #   format: 'YYYY-MM-DD HH:mm:ss'
     summary:
       logToConsoleLevels:
         - debug
+        - info
   
 postgresStorage:
   connection:
-    host: localhost
+    host: postgres-storage.ms
     port: 5432
-  credentials:
-    username: postgres
-    password: postgres
+  pool:
+    enabled: false
+    min: 1
+    max: 5
   queries:
     timeout: 5000
   mock:
     data: true
+    minDelay: 3000
+    maxDelay: 1000
 
   

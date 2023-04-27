@@ -36,35 +36,22 @@ otel:
         - debug
         - info
   
-paths:
-  repos:
-    root:
-      absPath: /utkusarioglu-com/projects/nextjs-grpc
-    ms:
-      relPath: ms
-    protos:
-      relPath: proto/src
-  certificates:
-    root:
-      absPath: /utkusarioglu-com/projects/nextjs-grpc/.certs
-    grpcServer:
-      relPath: grpc-server
-  credentials:
-    root:
-      absPath: /utkusarioglu-com/projects/nextjs-grpc/.secrets
-    postgresStorage:
-      relPath: ms.yaml
-
 postgresStorage:
   connection:
     host: localhost
     port: 5432
+  pool:
+    enabled: false
+    min: 1
+    max: 5
   credentials:
     username: postgres
     password: postgres
   queries:
     timeout: 5000
   mock:
-    data: true
+    data: false
+    minDelay: 500
+    maxDelay: 500
 
   

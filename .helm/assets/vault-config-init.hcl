@@ -19,7 +19,7 @@ pid_file = "/home/vault/.pid"
 
 template = {
   # TODO this path needs to include `inflation`. And that change probably requires rebuilding the image
-  destination = "/vault/secrets/postgres-storage/inflation.yaml"
+  destination = "/vault/credentials/postgres-storage/inflation/creds/ms.yaml"
   contents = <<-EOF
   {{- with secret "postgres-storage/inflation/creds/ms" -}}
   postgresStorage:

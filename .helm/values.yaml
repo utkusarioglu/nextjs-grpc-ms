@@ -27,10 +27,12 @@ podAnnotations:
   prometheus.io/scrape: "true"
   prometheus.io/path: /metrics
   prometheus.io/port: "9464"
+
   vault.hashicorp.com/agent-inject: "true"
   vault.hashicorp.com/agent-pre-populate-only: "true"
   vault.hashicorp.com/tls-secret: "vault-api-tls-client-ca"
   vault.hashicorp.com/agent-configmap: "vault-ms-postgres-storage"
+  vault.hashicorp.com/secret-volume-path: /vault
   
 
 podSecurityContext:
@@ -77,7 +79,7 @@ tolerations: []
 affinity: {}
 
 env:
-  RUN_MODE: development
+  RUN_MODE: production
     
   HTTP_SERVER_PORT: 8080
 
@@ -102,7 +104,7 @@ env:
   # REPO_PROTOS_SUBPATH: proto/src
 
   CERTIFICATES_ABSPATH: /.certificates 
-  CREDENTIALS_ABSPATH: /.credentials
+  CREDENTIALS_ABSPATH: /vault/credentials
 
   # POSTGRES_STORAGE_CREDS_ABSPATH: '.secrets/ms.yaml'
   POSTGRES_STORAGE_HOST: postgres-storage.ms
@@ -111,6 +113,7 @@ env:
   # LOG_FORMAT: json
   # LOG_LEVEL: warning
   # LOG_TIME_FORMAT: 'YYYY-MM-DD HH:mm:ss'
+  TZ: UTC0
 
 cloudProvider:
   isLocal: false
