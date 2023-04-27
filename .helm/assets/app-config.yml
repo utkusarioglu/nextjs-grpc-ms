@@ -47,7 +47,7 @@ postgresStorage:
   queries:
     timeout: 5000
   mock:
-    data: true
+    data: false
     minDelay: 3000
     maxDelay: 1000
 

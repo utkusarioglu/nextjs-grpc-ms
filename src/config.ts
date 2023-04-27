@@ -87,19 +87,6 @@ nconf.file("config-manual-transforms", {
   },
 });
 
-nconf
-  .file("vault-postgres-storage", {
-    file: nconf.get("paths:credentials:postgresStorage:inflation:relPath"),
-    format: {
-      parse: yaml.parse,
-      stringify: yaml.stringify,
-    },
-  })
-  .required([
-    "postgresStorage:credentials:username",
-    "postgresStorage:credentials:password",
-  ]);
-
 nconf.get("envAssignments").forEach(({ source, target }: EnvAssignment) => {
   const envValue = nconf.get(source);
   if (!!envValue) {
@@ -122,6 +109,19 @@ nconf
     });
     nconf.set(target, source.join(joiner));
   });
+
+nconf
+  .file("vault-postgres-storage", {
+    file: nconf.get("paths:credentials:postgresStorage:inflation:absPath"),
+    format: {
+      parse: yaml.parse,
+      stringify: yaml.stringify,
+    },
+  })
+  .required([
+    "postgresStorage:credentials:inflation:username",
+    "postgresStorage:credentials:inflation:password",
+  ]);
 
 nconf
   .get("configValueChecks")
@@ -235,10 +235,10 @@ nconf
   });
 
 configPrinter.printConfig(nconf, {
-  redactions: [
-    "postgresStorage:credentials:username",
-    "postgresStorage:credentials:password",
-  ],
+  // redactions: [
+  //   "postgresStorage:credentials:inflation:username",
+  //   "postgresStorage:credentials:inflation:password",
+  // ],
 });
 
 export default nconf;

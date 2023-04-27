@@ -16,4 +16,4 @@ paths:
       absPath: /utkusarioglu-com/projects/nextjs-grpc/.secrets
     postgresStorage:
       inflation:
-        relPath: postgres-storage/inflation/creds/ms.yaml
+        relPath: postgres-storage/inflation/ms.yaml

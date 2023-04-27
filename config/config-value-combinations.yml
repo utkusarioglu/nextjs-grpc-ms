@@ -1,10 +1,10 @@
 configValueCombinations:
-  - target: paths:credentials:postgresStorage:absPath
+  - target: paths:credentials:postgresStorage:inflation:absPath
     joiner: /
     components:
       - value: paths:credentials:root:absPath
         type: configPath
-      - value: paths:credentials:postgresStorage:relPath
+      - value: paths:credentials:postgresStorage:inflation:relPath
         type: configPath
   
   - target: grpcServer:url

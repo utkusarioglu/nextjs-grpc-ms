@@ -13,16 +13,18 @@ const poolConfig = config.get("postgresStorage:connection:pool:enabled")
     }
   : {};
 
+const connection = {
+  host: config.get("postgresStorage:connection:host"),
+  port: config.get("postgresStorage:connection:port"),
+  user: config.get("postgresStorage:credentials:inflation:username"),
+  password: config.get("postgresStorage:credentials:inflation:password"),
+  database: "inflation",
+};
+
 const knexInstance = knex({
   client: "pg",
-  // debug: true,
-  connection: {
-    host: config.get("postgresStorage:connection:host"),
-    port: config.get("postgresStorage:connection:port"),
-    user: config.get("postgresStorage:credentials:username"),
-    password: config.get("postgresStorage:credentials:password"),
-    database: "inflation",
-  },
+  debug: true,
+  connection,
   log,
   ...poolConfig,
 });

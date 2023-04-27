@@ -32,7 +32,7 @@ const traceExporter = config.get("otel:trace:logToConsole")
         credentials: credentials.createInsecure(),
         metadata: new Metadata(),
       });
-diag.setLogger(diagLogger, DiagLogLevel.DEBUG);
+diag.setLogger(diagLogger, DiagLogLevel.INFO);
 
 const prometheusPort = config.get("otel:metrics:port");
 const metricReader = new PrometheusExporter({ port: prometheusPort }, () =>

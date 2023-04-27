@@ -45,9 +45,10 @@ postgresStorage:
     enabled: true
     min: 1
     max: 5
-  credentials:
-    username: postgres
-    password: postgres
+  # credentials:
+  #   inflation:
+  #     username: postgres
+  #     password: postgres
   queries:
     timeout: 5000
   mock:
