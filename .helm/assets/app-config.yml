@@ -41,7 +41,7 @@ postgresStorage:
     host: postgres-storage.ms
     port: 5432
   pool:
-    enabled: false
+    enabled: true
     min: 1
     max: 5
   queries:
