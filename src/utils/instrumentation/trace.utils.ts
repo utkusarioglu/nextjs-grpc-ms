@@ -14,7 +14,12 @@ export function trace<T extends (...params: any[]) => any>(): MethodDecorator {
       log.debug(`Tracing ${propertyKey.toString()}`);
       const span = api.trace.getSpan(api.context.active());
       if (!span) {
-        throw new Error("SPAN_NOT_AVAILABLE");
+        return original.call<
+          typeof target,
+          Parameters<typeof descriptor.value>,
+          ReturnType<T>
+        >(target, ...args);
+        // throw new Error("SPAN_NOT_AVAILABLE");
       }
       span.addEvent(`Before  ${propertyKey.toString()} run`);
       span.setAttribute("propertyKey", propertyKey.toString());

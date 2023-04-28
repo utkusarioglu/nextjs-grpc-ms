@@ -16,6 +16,14 @@ class HttpService {
       res.writeHead(200);
       const url = new URL(req.url || "", `http://${req.headers.host}`);
       switch (url.pathname) {
+        case "/liveness":
+          const response = { status: "live" };
+          log.debug("Responding to liveness probe", { response });
+          res.statusCode = 200;
+          res.write(JSON.stringify(response));
+          res.end();
+          break;
+
         case "/decade-stats":
           const codes = url.searchParams.get("codes");
           if (!codes) {
@@ -40,6 +48,8 @@ class HttpService {
               }
             }
           );
+          // TODO you need to handle premature abortion manually, according to:
+          // https://github.com/knex/knex/wiki/Manually-Closing-Streams
           return;
         default:
           res.write(JSON.stringify({ message: "Not implemented" }));

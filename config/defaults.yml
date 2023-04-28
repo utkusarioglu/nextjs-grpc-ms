@@ -51,8 +51,8 @@ postgresStorage:
   #     password: postgres
   queries:
     timeout: 5000
-  mock:
-    data: false
+  mockConnection:
+    enabled: false
     minDelay: 3000
     maxDelay: 1000
 

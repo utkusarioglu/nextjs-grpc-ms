@@ -48,9 +48,13 @@ spec:
 
           livenessProbe:
             httpGet:
-              path: /metrics
-              port: {{ .OTEL_METRICS_PORT }}
+              path: /liveness
+              port: {{ .HTTP_SERVER_PORT }}
           # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # startupProbe:
           #   httpGet:
           #     path: /
           #     port: http

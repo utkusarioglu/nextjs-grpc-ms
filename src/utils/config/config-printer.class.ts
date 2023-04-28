@@ -29,9 +29,9 @@ export class ConfigPrinter {
   private sortForPrint(config: NconfConfig): NconfConfig {
     return Object.keys(config)
       .sort()
-      .reduce((p, c) => {
-        p[c] = config[c];
-        return p;
+      .reduce((acc, curr) => {
+        acc[curr] = config[curr];
+        return acc;
       }, {} as NconfConfig);
   }
 
@@ -66,13 +66,11 @@ export class ConfigPrinter {
         )
       );
     } else {
-      console.log(
-        JSON.stringify({
-          level: "debug",
-          message: "App using configuration options:",
-          config: redacted,
-        })
-      );
+      console.log({
+        level: "debug",
+        message: "App using configuration options:",
+        config: redacted,
+      });
     }
   }
 }
