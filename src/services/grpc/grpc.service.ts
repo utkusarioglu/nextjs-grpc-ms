@@ -8,6 +8,7 @@ import { pipeline } from "node:stream";
 
 type PackageDefs = Record<string, grpc.GrpcObject>;
 interface TlsProps {
+  ca: Buffer;
   crt: Buffer;
   key: Buffer;
 }
@@ -20,6 +21,7 @@ class GrpcService {
   constructor(packageDefs: PackageDefs, tlsProps: TlsProps) {
     this.packageDefs = packageDefs;
     this.tlsProps = tlsProps;
+    log.debug("Grpc server tls props", { ...this.tlsProps });
     this.server = new grpc.Server();
   }
 
@@ -64,7 +66,7 @@ class GrpcService {
     const credentials = config.get("grpcServer:tls:disable")
       ? grpc.ServerCredentials.createInsecure()
       : grpc.ServerCredentials.createSsl(
-          this.tlsProps.crt,
+          this.tlsProps.ca,
           [
             {
               private_key: this.tlsProps.key,
@@ -93,6 +95,7 @@ export default new GrpcService(
       ]["Inflation"],
   },
   {
+    ca: readFileSync(config.get("paths:certificates:grpcServer:caCrtAbsPath")),
     crt: readFileSync(
       config.get("paths:certificates:grpcServer:tlsCrtAbsPath")
     ),

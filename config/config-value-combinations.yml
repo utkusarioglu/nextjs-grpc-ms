@@ -39,6 +39,14 @@ configValueCombinations:
       - value: tls.key
         type: string
 
+  - target: paths:certificates:grpcServer:caCrtAbsPath
+    joiner: /
+    components:
+      - value: paths:certificates:grpcServer:absPath
+        type: configPath
+      - value: ca.crt
+        type: string
+
   - target: paths:repos:protos:absPath
     joiner: /
     components: 

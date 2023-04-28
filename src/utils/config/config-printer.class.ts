@@ -66,11 +66,13 @@ export class ConfigPrinter {
         )
       );
     } else {
-      console.log({
-        level: "debug",
-        message: "App using configuration options:",
-        config: redacted,
-      });
+      console.log(
+        JSON.stringify({
+          level: "debug",
+          message: "App using configuration options:",
+          config: redacted,
+        })
+      );
     }
   }
 }
