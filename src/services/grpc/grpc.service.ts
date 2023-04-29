@@ -25,11 +25,6 @@ class GrpcService {
   constructor(packageDefs: PackageDefs, tlsProps: TlsProps) {
     this.packageDefs = packageDefs;
     this.tlsProps = tlsProps;
-    log.debug("Grpc server tls props", {
-      ca: this.tlsProps.ca.toString(),
-      crt: this.tlsProps.crt.toString(),
-      key: this.tlsProps.key.toString(),
-    });
     this.server = new grpc.Server();
   }
 

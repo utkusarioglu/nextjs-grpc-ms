@@ -11,7 +11,7 @@ grpcServer:
     verbosity: info
   tls:
     disable: false
-    checkClientCert: false
+    checkClientCert: true
 
 httpServer:
   port: 8080
