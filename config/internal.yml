@@ -11,6 +11,7 @@ paths:
       absPath: /utkusarioglu-com/projects/nextjs-grpc/.certs
     grpcServer:
       relPath: grpc-server
+      # relPath: ms
   credentials:
     root:
       absPath: /utkusarioglu-com/projects/nextjs-grpc/.secrets

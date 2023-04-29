@@ -16,6 +16,7 @@ services:
       CERTIFICATES_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs
       CREDENTIALS_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc/ms/.secrets
       GRPC_SERVER_CERT_SUBPATH: grpc-server # needed by the dev and start scripts
+      # GRPC_SERVER_CERT_SUBPATH: ms # needed by the dev and start scripts
     volumes:
       - type: bind
         source: ..

@@ -10,8 +10,8 @@ grpcServer:
   logs:
     verbosity: info
   tls:
-    disable: true
-    checkClientCert: true
+    disable: false
+    checkClientCert: false
 
 httpServer:
   port: 8080
@@ -51,7 +51,7 @@ postgresStorage:
   queries:
     timeout: 5000
   mockConnection:
-    enabled: false
+    enabled: true
     minDelay: 500
     maxDelay: 1000
 

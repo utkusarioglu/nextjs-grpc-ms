@@ -7,11 +7,15 @@ import log from "_services/log/log.service";
 import { pipeline } from "node:stream";
 
 type PackageDefs = Record<string, grpc.GrpcObject>;
-interface TlsProps {
+interface TlsSet {
   ca: Buffer;
   crt: Buffer;
   key: Buffer;
 }
+
+type TlsProps = TlsSet & {
+  clients: TlsSet[];
+};
 
 class GrpcService {
   private packageDefs: PackageDefs;
@@ -21,7 +25,11 @@ class GrpcService {
   constructor(packageDefs: PackageDefs, tlsProps: TlsProps) {
     this.packageDefs = packageDefs;
     this.tlsProps = tlsProps;
-    log.debug("Grpc server tls props", { ...this.tlsProps });
+    log.debug("Grpc server tls props", {
+      ca: this.tlsProps.ca.toString(),
+      crt: this.tlsProps.crt.toString(),
+      key: this.tlsProps.key.toString(),
+    });
     this.server = new grpc.Server();
   }
 
@@ -70,7 +78,15 @@ class GrpcService {
           [
             {
               private_key: this.tlsProps.key,
-              cert_chain: this.tlsProps.crt,
+              // cert_chain: this.tlsProps.crt,
+              cert_chain: Buffer.concat([this.tlsProps.crt, this.tlsProps.ca]),
+            },
+            {
+              private_key: this.tlsProps.clients[0]!.key,
+              cert_chain: Buffer.concat([
+                this.tlsProps.clients[0]!.crt,
+                this.tlsProps.clients[0]!.ca,
+              ]),
             },
           ],
           config.get("grpcServer:tls:checkClientCert")
@@ -102,5 +118,18 @@ export default new GrpcService(
     key: readFileSync(
       config.get("paths:certificates:grpcServer:tlsKeyAbsPath")
     ),
+    clients: [
+      {
+        ca: readFileSync(
+          config.get("paths:certificates:grpcServer:absPath") + "/ca.crt"
+        ),
+        crt: readFileSync(
+          config.get("paths:certificates:grpcServer:absPath") + "/tls.crt"
+        ),
+        key: readFileSync(
+          config.get("paths:certificates:grpcServer:absPath") + "/tls.key"
+        ),
+      },
+    ],
   }
 );
