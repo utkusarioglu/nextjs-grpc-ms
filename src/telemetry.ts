@@ -9,8 +9,8 @@ import { Resource } from "@opentelemetry/resources";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
 import {
   ConsoleSpanExporter,
-  // InMemorySpanExporter,
   // SimpleSpanProcessor,
+  // InMemorySpanExporter,
 } from "@opentelemetry/sdk-trace-base";
 
 const diagLogger = new DiagConsoleLogger();
