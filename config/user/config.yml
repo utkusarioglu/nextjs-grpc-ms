@@ -10,8 +10,8 @@ grpcServer:
   logs:
     verbosity: info
   tls:
-    disable: false
-    checkClientCert: true
+    enabled: false
+    checkClientCert: false
 
 httpServer:
   port: 8080
@@ -44,10 +44,6 @@ postgresStorage:
     enabled: true
     min: 1
     max: 5
-  # credentials:
-  #   inflation:
-  #     username: postgres-config
-  #     password: postgres-config
   queries:
     timeout: 5000
   mockConnection:

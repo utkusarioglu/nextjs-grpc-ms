@@ -1,36 +1,18 @@
-# features:
-#   otel: true
-#   grpcServer: true
-#   httpServer: true
-  
 grpcServer:
-  # host: 0.0.0.0
-  # port: 50051
   trace: all
   logs:
     verbosity: info
   tls:
-    disable: false
-    checkClientCert: false
-
-# httpServer:
-#   port: 8080
+    enabled: true
+    checkClientCert: true
 
 otel:
-  # service:
-  #   name: ms
-  #   namespace: ms
   trace:
     host: otel-trace-collector.observability
-    # port: 4317
     logToConsole: false
-  # metrics:
-  #   port: 9464
   logs:
     level: debug
     format: json
-    # time:
-    #   format: 'YYYY-MM-DD HH:mm:ss'
     summary:
       logToConsoleLevels:
         - debug

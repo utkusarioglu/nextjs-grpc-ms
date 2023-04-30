@@ -25,7 +25,7 @@ nconf
   .required([
     "GRPC_SERVER_HOST",
     "GRPC_SERVER_PORT",
-    "GRPC_SERVER_CERT_SUBPATH", // get rid of this
+    "GRPC_SERVER_CERT_RELPATH", // get rid of this
     "POSTGRES_STORAGE_HOST",
     "POSTGRES_STORAGE_PORT",
     "HTTP_SERVER_PORT",

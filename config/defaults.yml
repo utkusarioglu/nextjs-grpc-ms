@@ -10,7 +10,7 @@ grpcServer:
   logs:
     verbosity: info
   tls:
-    disable: false
+    enabled: false
     checkClientCert: true
 
 httpServer:
@@ -32,7 +32,7 @@ otel:
     time:
       format: 'YYYY-MM-DD HH:mm:ss'
     summary:
-      redactedPhrase: "REDACTED"
+      redactedPhrase: REDACTED
       logToConsoleLevels:
         - debug
         - info
@@ -45,10 +45,6 @@ postgresStorage:
     enabled: true
     min: 1
     max: 5
-  # credentials:
-  #   inflation:
-  #     username: postgres
-  #     password: postgres
   queries:
     timeout: 5000
   mockConnection:

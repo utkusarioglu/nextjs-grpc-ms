@@ -66,9 +66,8 @@ class GrpcService {
 
   public startServer(): void {
     const serverUrl = config.get("grpcServer:url");
-    const credentials = config.get("grpcServer:tls:disable")
-      ? grpc.ServerCredentials.createInsecure()
-      : grpc.ServerCredentials.createSsl(
+    const credentials = config.get("grpcServer:tls:enabled")
+      ? grpc.ServerCredentials.createSsl(
           this.tlsProps.ca,
           [
             {
@@ -85,7 +84,8 @@ class GrpcService {
             },
           ],
           config.get("grpcServer:tls:checkClientCert")
-        );
+        )
+      : grpc.ServerCredentials.createInsecure();
     this.server.bindAsync(serverUrl, credentials, (err, _port) => {
       if (err) {
         log.error({ message: `Error occurred: `, error: err });

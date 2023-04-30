@@ -17,7 +17,7 @@ configValueChecks:
       - test: lengthLessThan
         value: 60
 
-  - configPath: GRPC_SERVER_CERT_SUBPATH 
+  - configPath: GRPC_SERVER_CERT_RELPATH 
     tests:
       - test: type
         value: string

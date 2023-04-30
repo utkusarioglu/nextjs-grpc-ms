@@ -82,14 +82,14 @@ spec:
                 include "ms.singleCertPath" ( 
                   dict 
                     "global" $
-                    "subpath" .GRPC_SERVER_CERT_SUBPATH
+                    "relpath" .GRPC_SERVER_CERT_RELPATH
                 ) | quote
               }}
               readOnly: true
             - name: ms-config
               mountPath: {{ ( printf "%s/%s/%s" 
                 .PROJECT_ROOT_ABSPATH 
-                .REPO_MS_SUBPATH 
+                .REPO_MS_RELPATH 
                 "config/user" | quote 
               ) }}
               readOnly: true
