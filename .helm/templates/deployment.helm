@@ -46,10 +46,10 @@ spec:
               containerPort: {{ .OTEL_METRICS_PORT }}
               protocol: TCP
 
-          livenessProbe:
-            httpGet:
-              path: /liveness
-              port: {{ .HTTP_SERVER_PORT }}
+#          livenessProbe:
+#            httpGet:
+#              path: /liveness
+#              port: {{ .HTTP_SERVER_PORT }}
           # readinessProbe:
           #   httpGet:
           #     path: /
