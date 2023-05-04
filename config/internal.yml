@@ -8,7 +8,8 @@ paths:
       relPath: proto/src
   certificates:
     root:
-      absPath: /utkusarioglu-com/projects/nextjs-grpc/.certs
+      # absPath: /utkusarioglu-com/projects/nextjs-grpc/.certs
+      absPath: /.certificates
     grpcServer:
       relPath: grpc-server
       # relPath: ms
