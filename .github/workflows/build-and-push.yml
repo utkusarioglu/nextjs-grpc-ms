@@ -28,7 +28,7 @@ jobs:
           - imageTagPrefix: ""
             repoRelPath: ms
             dockerfile: .docker/Dockerfile.dev
-            additionalFilesToWatch: ""
+            additionalFilesToWatch:  ""
             readmeFile: .docker/DOCKER_README.md
 
     steps:
