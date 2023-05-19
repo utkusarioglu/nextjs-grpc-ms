@@ -2,6 +2,6 @@ apiVersion: v2
 name: ms
 description: ms container for nextjs-gprc workshop
 type: application
-version: 0.1.72
+version: 0.1.73
 # appVersion: 0.0.7
-appVersion: experiment-feat-vault-90
+appVersion: experiment-feat-vault-92
