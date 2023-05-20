@@ -235,10 +235,10 @@ nconf
   });
 
 configPrinter.printConfig(nconf, {
-  // redactions: [
-  //   "postgresStorage:credentials:inflation:username",
-  //   "postgresStorage:credentials:inflation:password",
-  // ],
+  redactions: [
+    "postgresStorage:credentials:inflation:username",
+    "postgresStorage:credentials:inflation:password",
+  ],
 });
 
 export default nconf;

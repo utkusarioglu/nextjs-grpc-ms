@@ -26,15 +26,15 @@ services:
         source: ../../proto
         target: /utkusarioglu-com/projects/nextjs-grpc/proto
         read_only: true
-      - type: bind
-        source: ../../certificates/files/intermediate/certs/chain.crt
-        target: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs/grpc-server/tls.crt
-        read_only: true
-        volume:
-          nocopy: true
-      - type: bind
-        source: ../../certificates/files/intermediate/private/intermediate.key
-        target: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs/grpc-server/tls.key
-        read_only: true
-        volume:
-          nocopy: true
+      # - type: bind
+      #   source: ../../certificates/files/intermediate/certs/chain.crt
+      #   target: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs/grpc-server/tls.crt
+      #   read_only: true
+      #   volume:
+      #     nocopy: true
+      # - type: bind
+      #   source: ../../certificates/files/intermediate/private/intermediate.key
+      #   target: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs/grpc-server/tls.key
+      #   read_only: true
+      #   volume:
+      #     nocopy: true

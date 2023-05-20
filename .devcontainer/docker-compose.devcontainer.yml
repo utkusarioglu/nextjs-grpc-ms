@@ -17,9 +17,6 @@ services:
       - target: /home/node/.kube/config
         source: ~/.kube/config
         type: bind
-      - target: /root/.kube/config
-        source: ~/.kube/config
-        type: bind
     command: /bin/sh -c "while sleep 1000; do :; done"
     # network_mode: host
 

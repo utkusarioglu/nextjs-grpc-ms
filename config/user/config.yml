@@ -10,7 +10,7 @@ grpcServer:
   logs:
     verbosity: info
   tls:
-    enabled: true
+    enabled: false
     checkClientCert: false
 
 httpServer:
