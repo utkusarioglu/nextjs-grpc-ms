@@ -35,6 +35,11 @@ export class ConfigPrinter {
       }, {} as NconfConfig);
   }
 
+  /**
+   * @dev
+   * 1- This is fine for an object of this size. If the config size grows,
+   *    maybe a recursive solution may be more suitable.
+   */
   public printConfig(config: typeof nconf, options: PrintConfigOptions): void {
     const logLevel = config.get("otel:logs:level");
     const logToConsoleLevels = config.get(
@@ -46,7 +51,7 @@ export class ConfigPrinter {
     }
 
     const redactedPhrase = config.get("otel:logs:summary:redactedPhrase");
-    let base = JSON.parse(JSON.stringify(config.get()));
+    let base = JSON.parse(JSON.stringify(config.get())); // #1
     const sorted = this.sortForPrint(base);
     const redacted = options.redactions
       ? this.redactFromPrint(sorted, options.redactions, redactedPhrase)
