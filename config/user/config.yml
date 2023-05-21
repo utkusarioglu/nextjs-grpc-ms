@@ -10,8 +10,8 @@ grpcServer:
   logs:
     verbosity: info
   tls:
-    enabled: false
-    checkClientCert: false
+    enabled: true
+    checkClientCert: true
 
 httpServer:
   port: 8080
