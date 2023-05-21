@@ -18,7 +18,7 @@ httpServer:
 
 otel:
   service:
-    name: ms
+    name: nextjs-grpc-ms
     namespace: ms
   trace:
     host: localhost
