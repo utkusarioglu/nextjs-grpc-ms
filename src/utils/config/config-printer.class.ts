@@ -46,7 +46,7 @@ export class ConfigPrinter {
     }
 
     const redactedPhrase = config.get("otel:logs:summary:redactedPhrase");
-    let base = { ...config.get() };
+    let base = JSON.parse(JSON.stringify(config.get()));
     const sorted = this.sortForPrint(base);
     const redacted = options.redactions
       ? this.redactFromPrint(sorted, options.redactions, redactedPhrase)

@@ -28,6 +28,8 @@ const connection: NonNullable<Knex.Config["connection"]> = {
   keepAlive: true,
 };
 
+console.log({ connection });
+
 const knexInstance = knex({
   client: "pg",
   debug: true,
