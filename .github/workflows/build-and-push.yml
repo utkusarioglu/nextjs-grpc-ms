@@ -25,7 +25,8 @@ jobs:
     strategy:
       matrix:
         images:
-          - imageTagPrefix: ""
+          - enabled: true
+            imageTagPrefix: ""
             repoRelPath: ms
             dockerfile: .docker/Dockerfile.dev
             additionalFilesToWatch: ""
@@ -61,10 +62,15 @@ jobs:
       - name: Declare run state
         id: run_state
         run: |
-          if [ ${{ github.ref_type }} == tag ] && ( \
-            [ ${{ steps.changed_files.outputs.any_modified }} == true ] || \
-            [ ${{ github.event_name }} == workflow_dispatch ] \
-          ); then
+          echo "All modified files list:"
+          echo "${{ steps.changed_files.outputs.all_modified_files }}"
+          if [ ${{ github.ref_type }} == tag ] && \
+             [ ${{ matrix.images.enabled }} == 'true' ] && \
+            ( \
+              [ ${{ steps.changed_files.outputs.any_modified }} == true ] || \
+              [ ${{ github.event_name }} == workflow_dispatch ] \
+            );
+          then
             echo "run_docker_build=true" >> $GITHUB_OUTPUT
             echo "::debug::Docker build will carry out as expected."
           else
@@ -74,26 +80,28 @@ jobs:
 
       - name: Create variables
         id: variables
+        shell: bash
         run: |
-          image_name=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.CONTAINER_NAME }}
-          repo_tag=${{ github.ref_name }}
-          if [ ! -z "${{ matrix.images.imageTagPrefix }}" ]; then
-            image_tag_prefix="${repo_tag//\//-}."
-          fi
-          image_tag="$image_tag_prefix${repo_tag//\//-}"
-          dev_image_tag="dev-${image_tag}"
+          image_name="${{ secrets.DOCKERHUB_USERNAME }}/${{ env.CONTAINER_NAME }}"
+          repo_tag="${{ github.ref_name }}"
+          image_tag="${repo_tag//\//-}"
+          dev_image_tag="${image_tag}"
           image_ref="${image_name}:${image_tag}"
+          dev_image_ref="${image_name}:${dev_image_tag}"
           short_image_ref="${{ env.CONTAINER_NAME }}:${image_tag}"
-          dev_image_ref="$image_name:$dev_image_tag"
-          short_dev_image_ref="${{ env.CONTAINER_NAME }}:$dev_image_tag"
+          short_dev_image_ref="${{ env.CONTAINER_NAME }}:${dev_image_tag}"
 
-          echo "image_name=$image_name" >> $GITHUB_OUTPUT
-          echo "image_tag=$image_tag" >> $GITHUB_OUTPUT
-          echo "dev_image_tag=$dev_image_tag" >> $GITHUB_OUTPUT
-          echo "image_ref=$image_ref" >> $GITHUB_OUTPUT
-          echo "short_image_ref=$short_image_ref" >> $GITHUB_OUTPUT
-          echo "dev_image_ref=$dev_image_ref" >> $GITHUB_OUTPUT
-          echo "short_dev_image_ref=$short_dev_image_ref" >> $GITHUB_OUTPUT
+          for i in \
+            image_name \
+            image_tag \
+            dev_image_tag \
+            image_ref \
+            dev_image_ref \
+            short_image_ref \
+            short_dev_image_ref; 
+          do 
+            echo "$i=${!i}" >> $GITHUB_OUTPUT; 
+          done
 
       - name: Set up Docker Buildx
         if: steps.run_state.outputs.run_docker_build == 'true'
@@ -142,12 +150,3 @@ jobs:
           then
             mv ${{ env.CACHE_TO_DEST }} ${{ env.CACHE_FROM_SRC }}
           fi
-
-      - name: Telegram notifications
-        if: always()
-        uses: utkusarioglu/telegram-notifications@main
-        with:
-          telegram_id: ${{ secrets.TELEGRAM_ID }}
-          telegram_token: ${{ secrets.TELEGRAM_TOKEN }}
-          job_status: ${{ job.status }}
-          github_context: ${{ toJson(github) }}
