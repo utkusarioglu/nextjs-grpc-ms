@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ms-config
+data:
+  config.yml: |
+    {{ .Files.Get "assets/app-config.yml" | nindent 4 }}

@@ -1,0 +1,116 @@
+configValueChecks:
+  - configPath: CERTIFICATES_ABSPATH 
+    tests: 
+      - test: type
+        value: string
+      - test: lengthGreaterThan
+        value: 0
+      - test: lengthLessThan
+        value: 60
+        
+  - configPath: CREDENTIALS_ABSPATH 
+    tests:
+      - test: type
+        value: string
+      - test: lengthGreaterThan
+        value: 0
+      - test: lengthLessThan
+        value: 60
+
+  - configPath: GRPC_SERVER_CERT_RELPATH 
+    tests:
+      - test: type
+        value: string
+      - test: lengthGreaterThan
+        value: 0
+      - test: lengthLessThan
+        value: 20
+
+  - configPath: GRPC_SERVER_HOST
+    tests:
+      - test: type
+        value: string
+      - test: lengthGreaterThan
+        value: 0
+      - test: lengthLessThan
+        value: 63
+
+  - configPath: GRPC_SERVER_PORT
+    tests:
+      - test: type
+        value: number
+      - test: valueGreaterThan
+        value: 1000
+      - test: valueLessThan
+        value: 60000
+
+  - configPath: HTTP_SERVER_PORT
+    tests:
+      - test: type
+        value: number
+      - test: valueGreaterThan
+        value: 1000
+      - test: valueLessThan
+        value: 60000
+
+  - configPath: OTEL_METRICS_PORT
+    tests:
+      - test: type
+        value: number
+      - test: valueGreaterThan
+        value: 1000
+      - test: valueLessThan
+        value: 30000
+
+  - configPath: OTEL_TRACE_HOST
+    tests:
+      - test: type
+        value: string
+      - test: lengthGreaterThan
+        value: 0
+      - test: lengthLessThan
+        value: 63
+
+  - configPath: OTEL_TRACE_PORT
+    tests:
+      - test: type
+        value: number
+      - test: valueGreaterThan
+        value: 1000
+      - test: valueLessThan
+        value: 30000
+
+  - configPath: POSTGRES_STORAGE_HOST
+    tests:
+      - test: type
+        value: string
+      - test: lengthGreaterThan
+        value: 0
+      - test: lengthLessThan
+        value: 63
+
+  - configPath: POSTGRES_STORAGE_PORT
+    tests:
+      - test: type
+        value: number
+      - test: valueGreaterThan
+        value: 1000
+      - test: valueLessThan
+        value: 30000
+
+  - configPath: TZ
+    tests:
+      - test: valueEqualTo
+        value: UTC0
+
+  - configPath: otel:logs:level
+    tests:
+      - test: type
+        value: string
+      - test: valueIsALogLegalLevel
+
+  - configPath: otel:logs:format
+    tests:
+      - test: type
+        value: string
+      - test: valueIsALogLegalFormat

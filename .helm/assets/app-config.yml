@@ -1,0 +1,36 @@
+grpcServer:
+  trace: all
+  logs:
+    verbosity: info
+  tls:
+    enabled: true
+    checkClientCert: true
+
+otel:
+  trace:
+    host: otel-trace-collector.observability
+    logToConsole: false
+  logs:
+    level: debug
+    format: json
+    summary:
+      logToConsoleLevels:
+        - debug
+        - info
+  
+postgresStorage:
+  connection:
+    host: postgres-storage.ms
+    port: 5432
+  pool:
+    enabled: true
+    min: 1
+    max: 5
+  queries:
+    timeout: 5000
+  mock:
+    enabled: false
+    minDelay: 3000
+    maxDelay: 1000
+
+  

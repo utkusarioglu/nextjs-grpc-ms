@@ -1,8 +1,0 @@
-FROM node:17-slim
-ARG ROOT_PASS=ROOT
-RUN sh -c 'echo "root:$ROOT_PASS" | chpasswd'
-WORKDIR  /utkusarioglu/projects/nextjs-grpc/ms
-COPY ms /utkusarioglu/projects/nextjs-grpc/ms
-COPY proto /utkusarioglu/projects/nextjs-grpc/proto
-USER node
-ENTRYPOINT yarn start

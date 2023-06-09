@@ -7,6 +7,6 @@
       "label": "Send",
       "type": "shell",
       "command": "node src/send.js"
-    }
+    },
   ]
 }

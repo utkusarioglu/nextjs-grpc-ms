@@ -1,0 +1,38 @@
+configManualTransforms:
+  - target: grpcServer:trace
+    type: upperCase
+  - target: grpcServer:logs:verbosity
+    type: upperCase
+
+  - target: otel:service:name
+    type: lowerCase
+  - target: otel:service:namespace
+    type: upperCase
+  - target: otel:trace:host
+    type: lowerCase
+  - target: otel:logs:level
+    type: lowerCase
+  - target: otel:logs:format
+    type: upperCase
+  - target: otel:logs:summary:logToConsoleLevels
+    type: lowerCaseArray
+
+  - target: paths:repos:root:absPath
+    type: lowerCase
+  - target: paths:repos:ms:relPath
+    type: lowerCase
+  - target: paths:repos:protos:relPath
+    type: lowerCase
+  - target: paths:certificates:root:absPath
+    type: lowerCase
+  - target: paths:certificates:grpcServer:relPath
+    type: lowerCase
+  - target: paths:credentials:root:absPath
+    type: lowerCase
+  - target: paths:credentials:postgresStorage:inflation:relPath
+    type: lowerCase
+
+  - target: postgresStorage:connection:host
+    type: lowerCase
+  - target: postgresStorage:connection:host
+    type: lowerCase

@@ -1,0 +1,23 @@
+envAssignments:
+  - target: grpcServer:host
+    source: GRPC_SERVER_HOST
+  - target: grpcServer:port
+    source: GRPC_SERVER_PORT
+  - target: httpServer:host
+    source: HTTP_SERVER_HOST
+  - target: httpServer:port
+    source: HTTP_SERVER_PORT
+  - target: otel:trace:host
+    source: OTEL_TRACE_HOST
+  - target: otel:trace:port
+    source: OTEL_TRACE_PORT
+  - target: otel:metrics:port
+    source: OTEL_METRICS_PORT
+  - target: postgresStorage:connection:host
+    source: POSTGRES_STORAGE_HOST
+  - target: postgresStorage:connection:port
+    source: POSTGRES_STORAGE_PORT
+  - target: paths:certificates:root:absPath
+    source: CERTIFICATES_ABSPATH
+  - target: paths:credentials:root:absPath
+    source: CREDENTIALS_ABSPATH
