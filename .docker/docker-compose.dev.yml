@@ -6,30 +6,22 @@ services:
     #   dockerfile: .docker/Dockerfile.dev
     # user: node
     # volumes:
-    #   - ..:/utkusarioglu/projects/nextjs-grpc/ms
-    #   - ../../proto:/utkusarioglu/projects/nextjs-grpc/proto
+    #   - ..:/utkusarioglu-com/projects/nextjs-grpc/ms
+    #   - ../../proto:/utkusarioglu-com/projects/nextjs-grpc/proto
 
-    #   - ../../certificates/files/intermediate/certs/chain.crt:/utkusarioglu/projects/nextjs-grpc/ms/.certs/grpc-server/tls.crt
-    #   - ../../certificates/files/intermediate/private/intermediate.key:/utkusarioglu/projects/nextjs-grpc/ms/.certs/grpc-server/tls.key
-    image: utkusarioglu/node-devcontainer:17-slim.0.0
+    #   - ../../certificates/files/intermediate/certs/chain.crt:/utkusarioglu-com/projects/nextjs-grpc/ms/.certs/grpc-server/tls.crt
+    #   - ../../certificates/files/intermediate/private/intermediate.key:/utkusarioglu-com/projects/nextjs-grpc/ms/.certs/grpc-server/tls.key
+    image: utkusarioglu/node-devcontainer:20-slim.0.7
+    environment:
+      CERTIFICATES_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc/ms/.certs
+      CREDENTIALS_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc/ms/.secrets
+      GRPC_SERVER_CERT_RELPATH: grpc-server # needed by the dev and start scripts
     volumes:
       - type: bind
         source: ..
-        target: /utkusarioglu/projects/nextjs-grpc/ms
+        target: /utkusarioglu-com/projects/nextjs-grpc/ms
         read_only: false
       - type: bind
         source: ../../proto
-        target: /utkusarioglu/projects/nextjs-grpc/proto
+        target: /utkusarioglu-com/projects/nextjs-grpc/proto
         read_only: true
-      - type: bind
-        source: ../../certificates/files/intermediate/certs/chain.crt
-        target: /utkusarioglu/projects/nextjs-grpc/ms/.certs/grpc-server/tls.crt
-        read_only: true
-        volume:
-          nocopy: true
-      - type: bind
-        source: ../../certificates/files/intermediate/private/intermediate.key
-        target: /utkusarioglu/projects/nextjs-grpc/ms/.certs/grpc-server/tls.key
-        read_only: true
-        volume:
-          nocopy: true

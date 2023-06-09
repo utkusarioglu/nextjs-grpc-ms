@@ -8,7 +8,7 @@ image:
   repository: utkusarioglu/ms-nextjsgprc-projects-utkusarioglu-com
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  # tag: tf
+  # tag: 0.0.1
 
 imagePullSecrets: []
 nameOverride: ""
@@ -28,18 +28,26 @@ podAnnotations:
   prometheus.io/path: /metrics
   prometheus.io/port: "9464"
 
+  vault.hashicorp.com/agent-inject: "true"
+  vault.hashicorp.com/agent-pre-populate-only: "true"
+  vault.hashicorp.com/tls-secret: "vault-api-tls-client-ca"
+  vault.hashicorp.com/agent-configmap: "vault-ms-postgres-storage"
+  vault.hashicorp.com/secret-volume-path: /vault
+  
+
 podSecurityContext:
-  {}
-  # fsGroup: 2000
+  runAsUser: 10002
+  runAsGroup: 10002
+  fsGroup: 10002
+  fsGroupChangePolicy: "OnRootMismatch"
 
 securityContext:
-  {}
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  runAsNonRoot: true
+  runAsUser: 10002
 
 service:
   port: 50051
@@ -71,15 +79,44 @@ tolerations: []
 affinity: {}
 
 env:
-  HOST: 0.0.0.0
-  PORT: 50051
-  OTEL_TRACE_HOST: otel-trace
+  RUN_MODE: production
+    
+  HTTP_SERVER_PORT: 8080
+
+  GRPC_SERVER_HOST: 0.0.0.0
+  GRPC_SERVER_PORT: 50051
+  GRPC_SERVER_CERT_RELPATH: grpc-server
+  # GRPC_SERVER_TLS_DISABLE: false
+  # GRPC_SERVER_LOG_VERBOSITY: WARN
+  # GRPC_SERVER_TRACE: all
+  # GRPC_SERVER_CHECK_CLIENT_CERT: true
+
+  OTEL_TRACE_HOST: otel-trace-collector.observability
   OTEL_TRACE_PORT: 4317
-  GRPC_SERVER_CERT_PATH: /utkusarioglu/projects/nextjs-grpc/ms/.certs/grpc-server
-  GRPC_LOG_VERBOSITY: DEBUG
-  GRPC_TRACE: all
-  GRPC_CHECK_CLIENT_CERT: true
+  OTEL_METRICS_PORT: 9464
+  # OTEL_ENABLE_INSTRUMENTATION: false
+  # OTEL_SERVICE_NAME: nextjs-grpc-ms
+  # OTEL_SERVICE_NAMESPACE: ms
+
+  PROJECT_ROOT_ABSPATH: /utkusarioglu-com/projects/nextjs-grpc # TODO Get rid of this
+  REPO_MS_RELPATH: ms
+  # REPO_PROTOS_RELPATH: proto/src
+
+  CERTIFICATES_ABSPATH: /.certificates 
+  CREDENTIALS_ABSPATH: /vault/credentials
+
+  # POSTGRES_STORAGE_CREDS_ABSPATH: '.secrets/ms.yaml'
+  POSTGRES_STORAGE_HOST: postgres-storage.ms
+  POSTGRES_STORAGE_PORT: 5432
+
+  # LOG_FORMAT: json
+  # LOG_LEVEL: warning
+  # LOG_TIME_FORMAT: 'YYYY-MM-DD HH:mm:ss'
+  TZ: UTC0
 
 cloudProvider:
   isLocal: false
   isAws: false
+
+certSecretNames:
+  msGrpcServer: ms-grpc-server-cert
