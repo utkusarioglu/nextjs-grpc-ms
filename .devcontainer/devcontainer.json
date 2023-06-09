@@ -21,5 +21,5 @@
       }
     }
   },
-  "postAttachCommand": "yarn"
+  "postCreateCommand": "scripts/post-create-command.sh"
 }
