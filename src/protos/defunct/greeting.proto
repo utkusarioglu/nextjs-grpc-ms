@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package ms.nextjs_grpc;
+
+enum Job {
+  TEACHER = 0;
+  ENGINEER = 1;
+  SCIENTIST = 2;
+}
+
+message GreetingRequest {
+  string name = 1;
+  uint32 age = 2;
+  Job job = 3;
+  repeated string fav_movies = 4;
+}
+
+message GreetingResponse {
+  string greeting = 0;
+}
+
+service Greeter {
+  rpc sendGreeting(GreetingRequest) returns(GreetingResponse);
+}

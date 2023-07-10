@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package ms.nextjs_grpc;
+
+// inflation=> \d inflation.decade_stats;
+//                   View "inflation.decade_stats"
+//     Column    |       Type       | Collation | Nullable | Default
+// --------------+------------------+-----------+----------+---------
+//  country_name | text             |           |          |
+//  country_code | text             |           |          |
+//  decade       | double precision |           |          |
+//  count        | bigint           |           |          |
+//  average      | numeric(7,2)     |           |          |
+//  max          | numeric(7,2)     |           |          |
+//  min          | numeric(7,2)     |           |          |
+//  median       | numeric(10,2)    |           |          |
+//  range        | numeric(10,2)    |           |          |
+//  stddev       | numeric(10,2)    |           |          |
+//  variance     | numeric(10,2)    |           |          |
+message InflationDecadeStatsRequest { 
+  repeated string codes = 1;
+}
+
+message InflationDecadeStatsResponse {
+  string countryName = 1;
+  string countryCode = 2;
+  uint32 decade = 3;
+  uint32 count = 4;
+  float average = 5;
+  float max = 6;
+  float min = 7;
+  float median = 8;
+  float range = 9;
+  float stdDev = 10;
+  float variance = 11;
+}
+
+service Inflation {
+  rpc decadeStats(InflationDecadeStatsRequest) returns (stream InflationDecadeStatsResponse);
+}
