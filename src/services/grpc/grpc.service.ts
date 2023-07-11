@@ -2,10 +2,9 @@ import * as grpc from "@grpc/grpc-js";
 import config from "_config";
 import { readFileSync } from "fs";
 import { InflationModel } from "_models/inflation/inflation.model";
-// import protos from "_services/protos/protos.service";
 import log from "_services/log/log.service";
 import { pipeline } from "node:stream";
-import { inflationDefinition } from "../../codegen/src/protos/inflation/decade-stats.grpc-server";
+import { inflationDefinition } from "_gen/src/inflation/decade-stats.grpc-server";
 
 type PackageDefs = Record<string, grpc.ServiceDefinition>;
 interface TlsSet {
