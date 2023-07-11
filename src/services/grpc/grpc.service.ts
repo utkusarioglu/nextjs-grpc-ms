@@ -2,11 +2,12 @@ import * as grpc from "@grpc/grpc-js";
 import config from "_config";
 import { readFileSync } from "fs";
 import { InflationModel } from "_models/inflation/inflation.model";
-import protos from "_services/protos/protos.service";
+// import protos from "_services/protos/protos.service";
 import log from "_services/log/log.service";
 import { pipeline } from "node:stream";
+import { inflationDefinition } from "../../codegen/src/protos/inflation/decade-stats.grpc-server";
 
-type PackageDefs = Record<string, grpc.GrpcObject>;
+type PackageDefs = Record<string, grpc.ServiceDefinition>;
 interface TlsSet {
   ca: Buffer;
   crt: Buffer;
@@ -31,16 +32,15 @@ class GrpcService {
   private getService(
     serviceName: keyof typeof this.packageDefs
   ): grpc.ServiceDefinition {
-    const grpcPackage = this.packageDefs[serviceName];
-    if (!grpcPackage) {
+    const grpcService = this.packageDefs[serviceName];
+    if (!grpcService) {
       throw new Error("No such package");
     }
-    const grpcService = grpcPackage["service"];
-    if (!grpcService) {
-      throw new Error("No Service defined for given package");
-    }
-    // @ts-expect-error
-    return grpcService as grpc.ServiceDefinition;
+    // const grpcService = grpcPackage["service"];
+    // if (!grpcService) {
+    //   throw new Error("No Service defined for given package");
+    // }
+    return grpcService;
   }
 
   public addServices(): this {
@@ -99,11 +99,12 @@ class GrpcService {
 
 export default new GrpcService(
   {
-    inflation:
-      // @ts-ignore
-      protos.getProtoPackageDef("inflation/decade-stats.proto")["ms"][
-        "nextjs_grpc"
-      ]["Inflation"],
+    inflation: inflationDefinition,
+    // inflation:
+    //   // @ts-ignore
+    //   protos.getProtoPackageDef("inflation/decade-stats.proto")["ms"][
+    //     "nextjs_grpc"
+    //   ]["Inflation"],
   },
   {
     ca: readFileSync(config.get("paths:certificates:grpcServer:caCrtAbsPath")),
