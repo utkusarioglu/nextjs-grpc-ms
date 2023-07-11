@@ -9,3 +9,4 @@ node_modules
 /.secrets
 /types
 /config/user
+src/protos

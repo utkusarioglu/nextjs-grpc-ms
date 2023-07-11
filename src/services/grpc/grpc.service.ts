@@ -116,13 +116,13 @@ export default new GrpcService(
     clients: [
       {
         ca: readFileSync(
-          config.get("paths:certificates:grpcServer:absPath") + "/ca.crt"
+          config.get("paths:certificates:grpcServer:caCrtAbsPath")
         ),
         crt: readFileSync(
-          config.get("paths:certificates:grpcServer:absPath") + "/tls.crt"
+          config.get("paths:certificates:grpcServer:tlsCrtAbsPath")
         ),
         key: readFileSync(
-          config.get("paths:certificates:grpcServer:absPath") + "/tls.key"
+          config.get("paths:certificates:grpcServer:tlsKeyAbsPath")
         ),
       },
     ],
