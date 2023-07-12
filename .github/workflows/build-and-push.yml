@@ -38,14 +38,14 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 2
-          rel: experiment/chore/implement-buf
+          ref: experiment/chore/implement-buf
           path: ${{ matrix.images.repoRelPath }} 
 
       - name: Checkout proto
         uses: actions/checkout@v3
         with:
           repository: utkusarioglu/nextjs-grpc-proto
-          rel: experiment/chore/implement-buf
+          ref: experiment/chore/implement-buf
           fetch-depth: 2
           path: ${{ matrix.images.protoRepoRelPath }}
         
