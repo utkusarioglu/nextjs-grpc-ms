@@ -47,7 +47,7 @@ jobs:
           repository: utkusarioglu/nextjs-grpc-proto
           rel: experiment/chore/implement-buf
           fetch-depth: 2
-          path: proto 
+          path: ${{ matrix.images.protoRepoRelPath }}
         
 
       - name: Get changed files
