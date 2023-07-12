@@ -147,10 +147,10 @@ jobs:
           short-description: MS microservice containers for NextJS-Grpc
           readme-filepath: ${{ matrix.images.repoRelPath }}/${{ matrix.images.readmeFile }}
 
-      - name: Move cache
-        run: |
-          rm -rf ${{ env.CACHE_FROM_SRC }}
-          if [ -d ${{ env.CACHE_FROM_SRC }} ];
-          then
-            mv ${{ env.CACHE_TO_DEST }} ${{ env.CACHE_FROM_SRC }}
-          fi
+      # - name: Move cache
+      #   run: |
+      #     rm -rf ${{ env.CACHE_FROM_SRC }}
+      #     if [ -d ${{ env.CACHE_FROM_SRC }} ];
+      #     then
+      #       mv ${{ env.CACHE_TO_DEST }} ${{ env.CACHE_FROM_SRC }}
+      #     fi
