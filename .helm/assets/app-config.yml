@@ -9,7 +9,7 @@ grpcServer:
 otel:
   trace:
     host: otel-trace-collector.observability
-    logToConsole: true
+    logToConsole: false
   logs:
     level: debug
     format: json
