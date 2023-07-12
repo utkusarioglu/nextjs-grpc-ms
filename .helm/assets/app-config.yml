@@ -1,7 +1,7 @@
 grpcServer:
   trace: all
   logs:
-    verbosity: info
+    verbosity: debug
   tls:
     enabled: true
     checkClientCert: true
@@ -9,7 +9,7 @@ grpcServer:
 otel:
   trace:
     host: otel-trace-collector.observability
-    logToConsole: false
+    logToConsole: true
   logs:
     level: debug
     format: json
