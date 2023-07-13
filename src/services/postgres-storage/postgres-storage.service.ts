@@ -59,13 +59,13 @@ knexInstance.on("connection-error", (e) => {
 });
 
 knexInstance.on("query", (data: unknown) => {
-  log.debug("Query data", { data });
+  log.debug("Knex query data", { data });
 });
 knexInstance.on("query-error", (err: unknown, data: unknown) => {
-  log.debug("Query-error", { err, data });
+  log.debug("Knex query error", { err, data });
 });
 knexInstance.on("query-response", (...args: unknown[]) => {
-  log.debug("query-response", { args });
+  log.debug("knex query-response", { args });
 });
 
 export default knexInstance;

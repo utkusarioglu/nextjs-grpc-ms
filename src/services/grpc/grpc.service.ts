@@ -5,6 +5,7 @@ import { InflationModel } from "_models/inflation/inflation.model";
 import log from "_services/log/log.service";
 import { pipeline } from "node:stream";
 import { inflationDefinition } from "_gen/src/inflation/decade-stats.grpc-server";
+import { streamLogger } from "_utils/stream/stream.utils";
 
 type PackageDefs = Record<string, grpc.ServiceDefinition>;
 interface TlsSet {
@@ -35,10 +36,6 @@ class GrpcService {
     if (!grpcService) {
       throw new Error("No such package");
     }
-    // const grpcService = grpcPackage["service"];
-    // if (!grpcService) {
-    //   throw new Error("No Service defined for given package");
-    // }
     return grpcService;
   }
 
@@ -48,9 +45,8 @@ class GrpcService {
       // TODO you have an `any` type here
       decadeStats: async (call: any) => {
         log.debug("Received grpc.decadeStats", { request: call.request });
-        // @ts-expect-error
         const source = InflationModel.decadeStats(call.request);
-        pipeline(source, call, (e: unknown) => {
+        pipeline(source, streamLogger, call, (e: unknown) => {
           if (e) {
             log.error("Something went wrong in decadeStats pipeline", {
               error: e,

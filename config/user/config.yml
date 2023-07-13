@@ -10,8 +10,8 @@ grpcServer:
   logs:
     verbosity: info
   tls:
-    enabled: true
-    checkClientCert: true
+    enabled: false
+    checkClientCert: false
 
 httpServer:
   port: 8080
@@ -23,7 +23,7 @@ otel:
   trace:
     host: localhost
     port: 4317
-    logToConsole: true
+    logToConsole: false
   metrics:
     port: 9464
   logs:
