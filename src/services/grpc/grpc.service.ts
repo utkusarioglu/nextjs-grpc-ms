@@ -3,7 +3,7 @@ import config from "_config";
 import { readFileSync } from "fs";
 import { InflationModel } from "_models/inflation/inflation.model";
 import log from "_services/log/log.service";
-import { pipeline } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import { inflationDefinition } from "_gen/src/inflation/decade-stats.grpc-server";
 import { streamLogger } from "_utils/stream/stream.utils";
 
@@ -46,14 +46,17 @@ class GrpcService {
       decadeStats: async (call: any) => {
         log.debug("Received grpc.decadeStats", { request: call.request });
         const source = InflationModel.decadeStats(call.request);
-        pipeline(source, streamLogger, call, (e: unknown) => {
-          if (e) {
+        pipeline(source, streamLogger, call)
+          .then(() => {
+            source.removeAllListeners();
+            streamLogger.removeAllListeners();
+            log.debug("Grpc pipeline finalized");
+          })
+          .catch((err) => {
             log.error("Something went wrong in decadeStats pipeline", {
-              error: e,
+              error: err,
             });
-          }
-          log.debug("Grpc call finished");
-        });
+          });
       },
     });
     return this;

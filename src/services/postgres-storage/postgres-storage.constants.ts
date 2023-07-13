@@ -9,12 +9,21 @@ export const DECADE_STATS_MOCK_RESPONSE = Array(10)
     countryCode: String.fromCharCode(i + 97),
     decade: i, // uint
     // #1
-    count: i.toString(), // uint
-    average: i.toString(), // float
-    max: i.toString(), // float
-    min: i.toString(), // float
-    median: i.toString(), // float
-    range: i.toString(), // float
-    stdDev: i.toString(), // float
-    variance: i.toString(), // float
+    // count: i.toString(), // uint
+    // average: i.toString(), // float
+    // max: i.toString(), // float
+    // min: i.toString(), // float
+    // median: i.toString(), // float
+    // range: i.toString(), // float
+    // stdDev: i.toString(), // float
+    // variance: i.toString(), // float
+
+    count: i, // uint
+    average: i, // float
+    max: i, // float
+    min: i, // float
+    median: i, // float
+    range: i, // float
+    stdDev: i, // float
+    variance: i, // float
   }));

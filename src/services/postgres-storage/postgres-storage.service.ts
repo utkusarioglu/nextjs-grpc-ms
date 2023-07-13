@@ -36,7 +36,8 @@ const knexInstance = knex({
   ...pool,
 });
 
-// @ts-expect-error
+// @ts-expect-error: `context` type is not defined in knex even though
+// it exists
 const pg = knexInstance.context.client.driver;
 
 pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseInt);
