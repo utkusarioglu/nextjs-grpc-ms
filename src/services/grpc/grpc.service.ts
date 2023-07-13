@@ -46,10 +46,10 @@ class GrpcService {
       decadeStats: async (call: any) => {
         log.debug("Received grpc.decadeStats", { request: call.request });
         const source = InflationModel.decadeStats(call.request);
-        pipeline(source, streamLogger, call)
+        pipeline(source, streamLogger(), call)
           .then(() => {
-            source.removeAllListeners();
-            streamLogger.removeAllListeners();
+            // source.removeAllListeners();
+            // streamLogger.removeAllListeners();
             log.debug("Grpc pipeline finalized");
           })
           .catch((err) => {
