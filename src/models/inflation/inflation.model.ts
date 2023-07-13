@@ -5,7 +5,6 @@ import {
   meterPerformance,
 } from "_utils/instrumentation/counter.utils";
 import { trace } from "_utils/instrumentation/trace.utils";
-import log from "_services/log/log.service";
 import { api } from "@opentelemetry/sdk-node";
 
 export class InflationModel {
