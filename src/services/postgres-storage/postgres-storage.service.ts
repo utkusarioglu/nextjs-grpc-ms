@@ -36,6 +36,13 @@ const knexInstance = knex({
   ...pool,
 });
 
+// @ts-expect-error
+const pg = knexInstance.context.client.driver;
+
+pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseInt);
+pg.types.setTypeParser(pg.types.builtins.FLOAT8, BigInt);
+pg.types.setTypeParser(pg.types.builtins.INT8, BigInt);
+
 if (config.get("postgresStorage:mockConnection:enabled")) {
   mockDb.mock(knexInstance);
 

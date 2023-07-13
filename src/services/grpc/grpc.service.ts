@@ -124,8 +124,3 @@ export default new GrpcService(
     ],
   }
 );
-
-// "@bufbuild/buf": "^1.23.1",
-// "grpc-tools": "^1.12.4",
-// "grpc_tools_node_protoc_ts": "^5.3.3",
-// "typescript": "^5.0.4"
