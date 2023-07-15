@@ -4,8 +4,10 @@ import { readFileSync } from "fs";
 import { InflationModel } from "_models/inflation/inflation.model";
 import log from "_services/log/log.service";
 import { pipeline } from "node:stream/promises";
-import { inflationDefinition } from "_gen/src/inflation/decade-stats.grpc-server";
+import { inflationDefinition } from "_gen/inflation/decade-stats.grpc-server";
+import type { InflationDecadeStatsResponse } from "_gen/inflation/decade-stats";
 import { streamLogger } from "_utils/stream/stream.utils";
+import { Transform } from "stream";
 
 type PackageDefs = Record<string, grpc.ServiceDefinition>;
 interface TlsSet {
@@ -46,10 +48,38 @@ class GrpcService {
       decadeStats: async (call: any) => {
         log.debug("Received grpc.decadeStats", { request: call.request });
         const source = InflationModel.decadeStats(call.request);
-        pipeline(source, streamLogger(), call)
+        pipeline(
+          source,
+          new Transform({
+            objectMode: true,
+            transform(chunk, _enc, callback) {
+              const transformed: NonNullable<InflationDecadeStatsResponse> = {
+                creator: {
+                  username: "utku",
+                  profileImage: {
+                    width: 100,
+                    height: 100,
+                    src: "src",
+                    srcSet: "srcSet",
+                    placeholder: "placeholder",
+                    images: [
+                      {
+                        width: 100,
+                        height: 100,
+                        path: "path",
+                      },
+                    ],
+                  },
+                },
+                stats: chunk,
+              };
+              callback(null, transformed);
+            },
+          }),
+          streamLogger(),
+          call
+        )
           .then(() => {
-            // source.removeAllListeners();
-            // streamLogger.removeAllListeners();
             log.debug("Grpc pipeline finalized");
           })
           .catch((err) => {

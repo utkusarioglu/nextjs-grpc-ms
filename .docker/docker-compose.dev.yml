@@ -24,4 +24,4 @@ services:
       - type: bind
         source: ../../proto
         target: /utkusarioglu-com/projects/nextjs-grpc/proto
-        read_only: true
+        # read_only: true
