@@ -2,11 +2,14 @@ import * as grpc from "@grpc/grpc-js";
 import config from "_config";
 import { readFileSync } from "fs";
 import { InflationModel } from "_models/inflation/inflation.model";
-import protos from "_services/protos/protos.service";
 import log from "_services/log/log.service";
-import { pipeline } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import { inflationDefinition } from "_gen/inflation/decade-stats.grpc-server";
+import type { InflationDecadeStatsResponse } from "_gen/inflation/decade-stats";
+import { streamLogger } from "_utils/stream/stream.utils";
+import { Transform } from "stream";
 
-type PackageDefs = Record<string, grpc.GrpcObject>;
+type PackageDefs = Record<string, grpc.ServiceDefinition>;
 interface TlsSet {
   ca: Buffer;
   crt: Buffer;
@@ -31,16 +34,11 @@ class GrpcService {
   private getService(
     serviceName: keyof typeof this.packageDefs
   ): grpc.ServiceDefinition {
-    const grpcPackage = this.packageDefs[serviceName];
-    if (!grpcPackage) {
+    const grpcService = this.packageDefs[serviceName];
+    if (!grpcService) {
       throw new Error("No such package");
     }
-    const grpcService = grpcPackage["service"];
-    if (!grpcService) {
-      throw new Error("No Service defined for given package");
-    }
-    // @ts-expect-error
-    return grpcService as grpc.ServiceDefinition;
+    return grpcService;
   }
 
   public addServices(): this {
@@ -49,16 +47,46 @@ class GrpcService {
       // TODO you have an `any` type here
       decadeStats: async (call: any) => {
         log.debug("Received grpc.decadeStats", { request: call.request });
-        // @ts-expect-error
         const source = InflationModel.decadeStats(call.request);
-        pipeline(source, call, (e: unknown) => {
-          if (e) {
+        pipeline(
+          source,
+          new Transform({
+            objectMode: true,
+            transform(chunk, _enc, callback) {
+              const transformed: NonNullable<InflationDecadeStatsResponse> = {
+                creator: {
+                  username: "utku",
+                  profileImage: {
+                    width: 100,
+                    height: 100,
+                    src: "src",
+                    srcSet: "srcSet",
+                    placeholder: "placeholder",
+                    images: [
+                      {
+                        width: 100,
+                        height: 100,
+                        path: "path",
+                      },
+                    ],
+                  },
+                },
+                stats: chunk,
+              };
+              callback(null, transformed);
+            },
+          }),
+          streamLogger(),
+          call
+        )
+          .then(() => {
+            log.debug("Grpc pipeline finalized");
+          })
+          .catch((err) => {
             log.error("Something went wrong in decadeStats pipeline", {
-              error: e,
+              error: err,
             });
-          }
-          log.debug("Grpc call finished");
-        });
+          });
       },
     });
     return this;
@@ -99,11 +127,12 @@ class GrpcService {
 
 export default new GrpcService(
   {
-    inflation:
-      // @ts-ignore
-      protos.getProtoPackageDef("inflation/decade-stats.proto")["ms"][
-        "nextjs_grpc"
-      ]["Inflation"],
+    inflation: inflationDefinition,
+    // inflation:
+    //   // @ts-ignore
+    //   protos.getProtoPackageDef("inflation/decade-stats.proto")["ms"][
+    //     "nextjs_grpc"
+    //   ]["Inflation"],
   },
   {
     ca: readFileSync(config.get("paths:certificates:grpcServer:caCrtAbsPath")),
@@ -116,13 +145,13 @@ export default new GrpcService(
     clients: [
       {
         ca: readFileSync(
-          config.get("paths:certificates:grpcServer:absPath") + "/ca.crt"
+          config.get("paths:certificates:grpcServer:caCrtAbsPath")
         ),
         crt: readFileSync(
-          config.get("paths:certificates:grpcServer:absPath") + "/tls.crt"
+          config.get("paths:certificates:grpcServer:tlsCrtAbsPath")
         ),
         key: readFileSync(
-          config.get("paths:certificates:grpcServer:absPath") + "/tls.key"
+          config.get("paths:certificates:grpcServer:tlsKeyAbsPath")
         ),
       },
     ],

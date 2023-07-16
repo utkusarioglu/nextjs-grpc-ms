@@ -35,7 +35,6 @@ class HttpService {
           log.debug("Http GET /decade-stats", { codesArray });
           const stringTransformer = new StringTransformer();
           const jsonArrayTransformer = new JsonArrayTransformer();
-          // @ts-expect-error
           const source = InflationModel.decadeStats({ codes: codesArray });
           pipeline(
             source,

@@ -11,7 +11,7 @@ export class InflationModel {
   @meterRuns("decade_stats")
   @meterPerformance("decade_stats")
   @trace()
-  public static decadeStats({ codes }: MethodParams, span: api.Span) {
+  public static decadeStats({ codes }: MethodParams, span?: api.Span) {
     span && span.addEvent("Adding event from inside method");
     return knex
       .select({
