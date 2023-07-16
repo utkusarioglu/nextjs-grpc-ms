@@ -114,6 +114,9 @@ env:
   # LOG_TIME_FORMAT: 'YYYY-MM-DD HH:mm:ss'
   TZ: UTC0
 
+  GRPC_VERBOSITY: DEBUG
+  GRPC_TRACE: all
+
 cloudProvider:
   isLocal: false
   isAws: false

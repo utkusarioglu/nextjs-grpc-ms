@@ -36,6 +36,14 @@ const knexInstance = knex({
   ...pool,
 });
 
+// @ts-expect-error: `context` type is not defined in knex even though
+// it exists
+const pg = knexInstance.context.client.driver;
+
+pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseInt);
+pg.types.setTypeParser(pg.types.builtins.FLOAT8, parseInt);
+pg.types.setTypeParser(pg.types.builtins.INT8, parseInt);
+
 if (config.get("postgresStorage:mockConnection:enabled")) {
   mockDb.mock(knexInstance);
 
@@ -59,13 +67,13 @@ knexInstance.on("connection-error", (e) => {
 });
 
 knexInstance.on("query", (data: unknown) => {
-  log.debug("Query data", { data });
+  log.debug("Knex query data", { data });
 });
 knexInstance.on("query-error", (err: unknown, data: unknown) => {
-  log.debug("Query-error", { err, data });
+  log.debug("Knex query error", { err, data });
 });
 knexInstance.on("query-response", (...args: unknown[]) => {
-  log.debug("query-response", { args });
+  log.debug("knex query-response", { args });
 });
 
 export default knexInstance;

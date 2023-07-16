@@ -1,7 +1,8 @@
 grpcServer:
+  host: https://0.0.0.0
   trace: all
   logs:
-    verbosity: info
+    verbosity: debug
   tls:
     enabled: true
     checkClientCert: true

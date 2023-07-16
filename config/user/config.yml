@@ -23,7 +23,7 @@ otel:
   trace:
     host: localhost
     port: 4317
-    logToConsole: true
+    logToConsole: false
   metrics:
     port: 9464
   logs:
