@@ -3,10 +3,6 @@ name: build-and-push
 on:
   workflow_call:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   container-build:
     uses: ./.github/workflows/container.build.wfc.yml
