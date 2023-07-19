@@ -2,14 +2,6 @@ name: build-and-push
 
 on:
   workflow_call:
-  # push:
-  #   tags:
-  #     - "**.**.**"
-  #     - "experiment/**/**/**"
-  #   paths:
-  #     - src/**
-  #     - .github/workflows/build-and-push.yml
-  # workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -46,7 +38,6 @@ jobs:
           repository: utkusarioglu/nextjs-grpc-proto
           fetch-depth: 2
           path: ${{ matrix.images.protoRepoRelPath }}
-        
 
       - name: Get changed files
         id: changed_files
