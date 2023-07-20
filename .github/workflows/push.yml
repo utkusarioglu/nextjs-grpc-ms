@@ -20,3 +20,4 @@ jobs:
     secrets: inherit
     with:
       msRef: ${{ github.ref_name }}
+      infraRef: experiment/test/workflow-calls
