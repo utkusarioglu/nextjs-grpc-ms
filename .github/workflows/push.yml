@@ -1,4 +1,4 @@
-name: build-and-push
+name: Push
 
 on:
   push:
@@ -8,21 +8,15 @@ on:
     paths:
       - src/**
       - .github/workflows/build-test-push.wfc.yml
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - edited
-      - synchronize
-    branches:
-      - main
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
   build-test-push:
     uses: ./.github/workflows/build-test-push.wfc.yml
     secrets: inherit
+    with:
+      msRef: ${{ github.ref_name }}
