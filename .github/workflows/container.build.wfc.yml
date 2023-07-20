@@ -1,22 +1,7 @@
 name: build-and-push
 
 on:
-  push:
-    tags:
-      - "**.**.**"
-      - "experiment/**/**/**"
-    paths:
-      - src/**
-      - .github/workflows/build-and-push.yml
-  workflow_dispatch:
-
-env:
-  CONTAINER_NAME: ms-nextjsgprc-projects-utkusarioglu-com
-  CONTAINER_USERNAME: 10011
-  CONTAINER_GROUP: 10011
-  CACHE_TO_DEST: /tmp/.buildx-cache-new
-  CACHE_FROM_SRC: /tmp/.buildx-cache
-  TAG_FALLBACK_STRING: tag-unavailable
+  workflow_call:
 
 jobs:
   build-and-push:
@@ -32,6 +17,13 @@ jobs:
             dockerfile: .docker/Dockerfile.dev
             additionalFilesToWatch: ""
             readmeFile: .docker/DOCKER_README.md
+        common:
+          - containerName: ms-nextjsgprc-projects-utkusarioglu-com
+            containerUsername: 10011
+            containerGroup: 10011
+            cacheToDest: /tmp/.buildx-cache-new
+            cacheFromSrc: /tmp/.buildx-cache
+            tagFallbackString: tag-unavailable
 
     steps:
       - name: Checkout ${{ matrix.images.repoRelPath }}
@@ -46,7 +38,6 @@ jobs:
           repository: utkusarioglu/nextjs-grpc-proto
           fetch-depth: 2
           path: ${{ matrix.images.protoRepoRelPath }}
-        
 
       - name: Get changed files
         id: changed_files
@@ -83,14 +74,14 @@ jobs:
         id: variables
         shell: bash
         run: |
-          image_name="${{ secrets.DOCKERHUB_USERNAME }}/${{ env.CONTAINER_NAME }}"
+          image_name="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.common.containerName }}"
           repo_tag="${{ github.ref_name }}"
           image_tag="${repo_tag//\//-}"
           dev_image_tag="${image_tag}"
           image_ref="${image_name}:${image_tag}"
           dev_image_ref="${image_name}:${dev_image_tag}"
-          short_image_ref="${{ env.CONTAINER_NAME }}:${image_tag}"
-          short_dev_image_ref="${{ env.CONTAINER_NAME }}:${dev_image_tag}"
+          short_image_ref="${{ matrix.common.containerName }}:${image_tag}"
+          short_dev_image_ref="${{ matrix.common.containerName }}:${dev_image_tag}"
 
           for i in \
             image_name \
@@ -105,19 +96,19 @@ jobs:
           done
 
       - name: Set up Docker Buildx
-        if: steps.run_state.outputs.run_docker_build == 'true'
+        # if: steps.run_state.outputs.run_docker_build == 'true'
         id: buildx
         uses: docker/setup-buildx-action@v1
 
       - name: Login to DockerHub
-        if: steps.run_state.outputs.run_docker_build == 'true'
+        # if: steps.run_state.outputs.run_docker_build == 'true'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build ${{ steps.variables.outputs.short_image_ref }}
-        if: steps.run_state.outputs.run_docker_build == 'true'
+        # if: steps.run_state.outputs.run_docker_build == 'true'
         uses: docker/build-push-action@v2
         id: docker_build
         with:
@@ -126,17 +117,17 @@ jobs:
           file: ${{ matrix.images.repoRelPath }}/${{ matrix.images.dockerfile }} # ---
           push: true
           pull: false
-          cache-from: type=local,src=${{ env.CACHE_FROM_SRC }}
-          cache-to: type=local,mode=max,dest=${{ env.CACHE_TO_DEST }}
+          cache-from: type=local,src=${{ matrix.common.cacheFromSrc }}
+          cache-to: type=local,mode=max,dest=${{ matrix.common.cacheToDest }}
           build-args: |
             IMAGE_TAG=${{ steps.variables.outputs.image_tag }}
             ROOT_PASS=${{ secrets.DOCKER_DEV_IMAGE_ROOT_PASS }}
             PROTO_REPO_RELPATH=${{ matrix.images.protoRepoRelPath }}
-            USERNAME=${{ env.CONTAINER_USERNAME }}
-            GROUP=${{ env.CONTAINER_GROUP }}
+            USERNAME=${{ matrix.common.containerUsername }}
+            GROUP=${{ matrix.common.containerGroup }}
 
       - name: Set Docker Hub description
-        if: steps.run_state.outputs.run_docker_build == 'true'
+        # if: steps.run_state.outputs.run_docker_build == 'true'
         uses: peter-evans/dockerhub-description@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -147,8 +138,8 @@ jobs:
 
       - name: Move cache
         run: |
-          rm -rf ${{ env.CACHE_FROM_SRC }}
-          if [ -d ${{ env.CACHE_FROM_SRC }} ];
+          rm -rf ${{ matrix.common.cacheFromSrc }}
+          if [ -d ${{ matrix.common.cacheFromSrc }} ];
           then
-            mv ${{ env.CACHE_TO_DEST }} ${{ env.CACHE_FROM_SRC }}
+            mv ${{ matrix.common.cacheToDest }} ${{ matrix.common.cacheFromSrc }}
           fi

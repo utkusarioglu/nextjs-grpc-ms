@@ -1,0 +1,23 @@
+name: PR
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test-push:
+    uses: ./.github/workflows/build-test-push.wfc.yml
+    secrets: inherit
+    with:
+      msRef: ${{ github.head_ref }}
